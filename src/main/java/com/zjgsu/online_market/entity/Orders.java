@@ -31,7 +31,7 @@ public class Orders implements Serializable {
 
     private Integer number;
 
-    private BigDecimal amount;
+    private Double amount;
 
     private LocalDateTime date;
 

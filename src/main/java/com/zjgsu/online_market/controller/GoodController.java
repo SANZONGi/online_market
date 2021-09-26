@@ -51,7 +51,7 @@ public class GoodController {
     }
 
     @PostMapping("/publishGood")
-    public Result publishGood(@Param("uid") Long uid, @Param("gname") String gname, @Param("description") String description, @Param("price") BigDecimal price, @Param("stock") Integer stock, @Param("image") String image) {
+    public Result publishGood(@Param("uid") Long uid, @Param("gname") String gname, @Param("description") String description, @Param("price") Double price, @Param("stock") Integer stock, @Param("image") String image) {
         if (price.doubleValue() < 0 || stock < 0)
         {
             return Result.fail(301,"输入格式错误",null);
@@ -96,12 +96,12 @@ public class GoodController {
 
     @GetMapping("/good/alive")
     public Result checkGoodByStatus() {
-        return Result.success(goodService.getBaseMapper().selectList(new QueryWrapper<Good>().ne("status", 2)) != null);
+        return Result.success(goodService.getBaseMapper().selectList(new QueryWrapper<Good>().ne("status", 2)).isEmpty());
     }
 
     @GetMapping("good/frozen")
     public Result goodInSell() {
-        if (ordersService.getBaseMapper().selectOne(new QueryWrapper<Orders>().eq("status",1)) == null)
+        if (ordersService.getBaseMapper().selectList(new QueryWrapper<Orders>().eq("status",1)).isEmpty())
         {
             return Result.success(null);
         }

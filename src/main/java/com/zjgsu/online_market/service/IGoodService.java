@@ -20,6 +20,6 @@ import java.util.List;
  */
 
 public interface IGoodService extends IService<Good>{
-    void publishGood(@Param("uid") Long uid, @Param("gname") String gname, @Param("description") String description, @Param("price") BigDecimal price, @Param("stock") Integer stock, @Param("image") String image,@Param("status") Integer status);
+    void publishGood(@Param("uid") Long uid, @Param("gname") String gname, @Param("description") String description, @Param("price") Double price, @Param("stock") Integer stock, @Param("image") String image,@Param("status") Integer status);
     void updateGoodStatus_sell(@Param("gid") Long gid,@Param("stock") Integer stock,@Param("status") Integer status);
 }
