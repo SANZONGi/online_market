@@ -6,13 +6,17 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import com.zjgsu.online_market.common.lang.BASE64DecodedMultipartFile;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.MyParam;
+import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.service.impl.GoodServiceImpl;
+import com.zjgsu.online_market.service.impl.OrdersServiceImpl;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +35,7 @@ import java.util.UUID;
  * @since 2021-09-09
  */
 
+@Validated
 @RestController
 public class GoodController {
 
@@ -38,16 +43,19 @@ public class GoodController {
     private GoodServiceImpl goodService;
 
     @Autowired
-    private MyParam xjj;
+    private OrdersServiceImpl ordersService;
 
     @GetMapping("/home")
     public Result list() {
-        return Result.success(200, "查询商品列表成功", goodService.getBaseMapper().selectList(new QueryWrapper<Good>().ne("status", 2)));
+        return Result.success( goodService.getBaseMapper().selectList(new QueryWrapper<Good>().ne("status", 2)));
     }
 
     @PostMapping("/publishGood")
-    @ResponseBody
     public Result publishGood(@Param("uid") Long uid, @Param("gname") String gname, @Param("description") String description, @Param("price") BigDecimal price, @Param("stock") Integer stock, @Param("image") String image) {
+        if (price.doubleValue() < 0 || stock < 0)
+        {
+            return Result.fail(301,"输入格式错误",null);
+        }
         String imgname = UUID.randomUUID() + ".png";
         String realpath = null;
         String path = null;
@@ -60,57 +68,83 @@ public class GoodController {
             path = "http://localhost:8081/static/" + imgname;
 //            System.out.println("other");
         }
-        MultipartFile file;
+        MultipartFile file=null;
         if (image != null)
             file = BASE64DecodedMultipartFile.base64ToMultipart(image);
-        else return Result.fail("无图片", null);
+//        else return Result.fail("无图片", null);
         try {
-            if (file != null) {
+            if (image!=null && file != null) {
                 file.transferTo(new File(realpath));
                 goodService.publishGood(uid, gname, description, price, stock, path, 0);
+            }else {
+                goodService.publishGood(uid, gname, description, price, stock, null, 0);
             }
         } catch (IOException e) {
-            return Result.fail(203, e.toString(), null);
+            return Result.fail(605, e.toString(), null);
         }
-        return Result.success(200, "发布成功", null);
+        return Result.success(null);
     }
 
     @GetMapping("/good/{gid}")
     public Result goodByid(@PathVariable(name = "gid") Long gid) {
-        return Result.success(200, "获取成功", goodService.getBaseMapper().selectOne(new QueryWrapper<Good>().eq("gid", gid)));
+        Good good = goodService.getBaseMapper().selectOne(new QueryWrapper<Good>().eq("gid", gid));
+        if (good == null) {
+            return Result.fail(601,"商品不存在",null);
+        }
+        return Result.success(good);
     }
 
     @GetMapping("/good/alive")
     public Result checkGoodByStatus() {
-        return Result.success(200, "", goodService.getBaseMapper().selectOne(new QueryWrapper<Good>().ne("status", 2)) != null);
+        return Result.success(goodService.getBaseMapper().selectList(new QueryWrapper<Good>().ne("status", 2)) != null);
     }
 
     @GetMapping("good/frozen")
     public Result goodInSell() {
+        if (ordersService.getBaseMapper().selectOne(new QueryWrapper<Orders>().eq("status",1)) == null)
+        {
+            return Result.success(null);
+        }
         return Result.success(goodService.getBaseMapper().selectList(new QueryWrapper<Good>().eq("status", 1).or().eq("status",0)));
     }
 
     @PostMapping("good/frozen/{gid}")
-    public Result frozenGood(@PathVariable("gid") Long gid)
-    {
+    public Result frozenGood(@PathVariable("gid") Long gid) {
         Good good = goodService.getOne(new QueryWrapper<Good>().eq("gid",gid));
+        if (good == null){
+            return Result.fail(601,"商品不存在",null);
+        }
+        if (good.getStatus() == 1) {
+            return Result.fail(604,"商品冻结中",null);
+        }
+        if (good.getStatus() == 2) {
+            return Result.fail(603,"商品下架中",null);
+        }
         good.setUid(null).setGname(null).setDescription(null).setImage(null).setPrice(null).setStock(null);
         UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>();
         updateWrapper.set("status",1).eq("gid",gid);
         goodService.getBaseMapper().update(good,updateWrapper);
         return Result.success(gid);
     }
+
     @PostMapping("good/unfrozen/{gid}")
-    public Result unFrozenGood(@PathVariable("gid") Long gid)
-    {
+    public Result unFrozenGood(@PathVariable("gid") Long gid) {
         Good good = goodService.getOne(new QueryWrapper<Good>().eq("gid",gid));
+        if (good == null){
+            return Result.fail(601,"商品不存在",null);
+        }
+        if (good.getStatus() == 0) {
+            return Result.fail(602,"商品解冻中",null);
+        }
+        if (good.getStatus() == 2) {
+            return Result.fail(603,"商品下架中",null);
+        }
         UpdateWrapper<Good> updateWrapper = new UpdateWrapper<>();
         good.setUid(null).setGname(null).setDescription(null).setImage(null).setPrice(null).setStock(null);
         updateWrapper.set("status",0).eq("gid",gid);
         goodService.getBaseMapper().update(good,updateWrapper);
         return Result.success(gid);
     }
-
 
     @GetMapping("/good/listofhis")
     public Result listOfHis(@RequestParam(name = "currentpage", defaultValue = "1") Long currentpage, @RequestParam("size") Integer size) {

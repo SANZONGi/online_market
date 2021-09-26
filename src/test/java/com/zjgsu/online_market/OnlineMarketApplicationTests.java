@@ -1,4 +1,5 @@
 package com.zjgsu.online_market;
+import com.zjgsu.online_market.controller.GoodController;
 import org.junit.runner.RunWith;
 import com.zjgsu.online_market.entity.MyParam;
 import org.junit.jupiter.api.Test;
@@ -10,10 +11,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 class OnlineMarketApplicationTests {
     @Autowired
-    private MyParam xjj;
+    private GoodController goodController;
     @Test
     void contextLoads() {
-        System.out.println(xjj .getImgfilepath()+ "xxx.jpg");
+        System.out.println(goodController.unFrozenGood(35L));
     }
 
 }
