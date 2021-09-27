@@ -1,4 +1,4 @@
-package com.zjgsu.online_market.common.interceptor;
+package com.zjgsu.online_market.interceptor;
 
 import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.fasterxml.jackson.databind.ObjectMapper;

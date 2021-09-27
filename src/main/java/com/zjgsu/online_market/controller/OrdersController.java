@@ -1,6 +1,7 @@
 package com.zjgsu.online_market.controller;
 
 
+import cn.hutool.db.sql.Order;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -94,21 +95,32 @@ public class OrdersController {
     }
 
     @PostMapping("/orders/reject/{oid}")
-    public Result reject(@PathVariable(name = "oid",required = true) Long oid)
-    {
+    public Result reject(@PathVariable(name = "oid") Long oid) {
+        Orders orders = ordersService.getOne(new QueryWrapper<Orders>().eq("oid",oid));
+        if (orders == null)
+        {
+            return Result.fail(701,"订单不存在",null);
+        }
         ordersService.acOrder(oid,3);
-        return Result.success(200,"交易取消",oid);
+        return Result.success(oid);
     }
 
     @PostMapping("/orders/success")
     public Result success(@RequestParam("oid") Long oid,@RequestParam("gid") Long gid) {
         Good good = goodService.getOne(new QueryWrapper<Good>().eq("gid",gid));
+        if (good.getStock() <= 0) {
+            return Result.fail(607,"商品已售空",null);
+        }
+        if (good.getStatus() == 2)
+        {
+            return Result.fail(603,"商品下架中",null);
+        }
         UpdateWrapper<Good> updateWrapper = new UpdateWrapper<>();
         good.setUid(null).setImage(null).setPrice(null).setGname(null).setDescription(null).setGid(null);
         updateWrapper.set("status",2).set("stock",good.getStock()-1).eq("gid",gid);
         goodService.getBaseMapper().update(good,updateWrapper);
         ordersService.acOrder(oid,2);
-        return Result.success(200,"交易成功",oid);
+        return Result.success(null);
     }
 
 }

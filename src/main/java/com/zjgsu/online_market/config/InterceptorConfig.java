@@ -1,6 +1,5 @@
 package com.zjgsu.online_market.config;
-
-import com.zjgsu.online_market.common.interceptor.JWTInterceptor;
+import com.zjgsu.online_market.interceptor.JWTInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -11,14 +10,14 @@ import java.io.File;
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
 
-
     //jwt拦截
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new JWTInterceptor())
-                .addPathPatterns("/good/frozen/**")
-                .addPathPatterns("/users/changepassword");
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(new JWTInterceptor())
+//                .addPathPatterns("/good/frozen/**")
+//                .addPathPatterns("/users/changepassword")
+//                .addPathPatterns("/orders/**");
+//    }
 
 
     //资源访问
