@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sun.javaws.IconUtil;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import com.zjgsu.online_market.common.lang.BASE64DecodedMultipartFile;
 import com.zjgsu.online_market.common.lang.Result;
@@ -68,9 +69,8 @@ public class GoodController {
             path = "http://localhost:8081/static/" + imgname;
 //            System.out.println("other");
         }
-        MultipartFile file=null;
-        if (image != null)
-            file = BASE64DecodedMultipartFile.base64ToMultipart(image);
+        MultipartFile file = BASE64DecodedMultipartFile.base64ToMultipart(image);
+        System.out.println(realpath);
         try {
             if (file != null) {
                 file.transferTo(new File(realpath));
