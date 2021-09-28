@@ -4,14 +4,10 @@ package com.zjgsu.online_market.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.javaws.IconUtil;
-import com.sun.org.apache.xpath.internal.operations.Or;
 import com.zjgsu.online_market.common.lang.BASE64DecodedMultipartFile;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
-import com.zjgsu.online_market.entity.MyParam;
 import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.service.impl.GoodServiceImpl;
 import com.zjgsu.online_market.service.impl.OrdersServiceImpl;
@@ -23,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 /**
