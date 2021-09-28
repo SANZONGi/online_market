@@ -52,7 +52,7 @@ public class GoodController {
 
     @PostMapping("/publishGood")
     public Result publishGood(@Param("uid") Long uid, @Param("gname") String gname, @Param("description") String description, @Param("price") Double price, @Param("stock") Integer stock, @Param("image") String image) {
-        if (price.doubleValue() < 0 || stock < 0)
+        if (price < 0 || stock < 0)
         {
             return Result.fail(301,"输入格式错误",null);
         }
@@ -71,13 +71,10 @@ public class GoodController {
         MultipartFile file=null;
         if (image != null)
             file = BASE64DecodedMultipartFile.base64ToMultipart(image);
-//        else return Result.fail("无图片", null);
         try {
-            if (image!=null && file != null) {
+            if (file != null) {
                 file.transferTo(new File(realpath));
                 goodService.publishGood(uid, gname, description, price, stock, path, 0);
-            }else {
-                goodService.publishGood(uid, gname, description, price, stock, null, 0);
             }
         } catch (IOException e) {
             return Result.fail(605, e.toString(), null);

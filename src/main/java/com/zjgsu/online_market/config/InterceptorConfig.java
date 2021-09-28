@@ -10,7 +10,7 @@ import java.io.File;
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
 
-    //jwt拦截
+////    jwt拦截
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
 //        registry.addInterceptor(new JWTInterceptor())

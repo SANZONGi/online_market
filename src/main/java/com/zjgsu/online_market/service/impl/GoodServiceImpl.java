@@ -26,10 +26,6 @@ public class GoodServiceImpl  extends ServiceImpl<GoodMapper,Good> implements IG
     @Autowired
     private GoodMapper goodMapper;
 
-//    public List<Good> selectAll(){
-//        return goodMapper.selectList(new QueryWrapper<Good>().ne("staus",2));
-//    }
-
     public void publishGood(@Param("uid") Long uid, @Param("gname") String gname, @Param("description") String description, @Param("price") Double price, @Param("stock") Integer stock, @Param("image") String image,@Param("status") Integer status)
     {
         goodMapper.publishGood(uid,gname,description,price,stock,image,status);

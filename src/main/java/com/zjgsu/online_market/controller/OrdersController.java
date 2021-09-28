@@ -1,27 +1,19 @@
 package com.zjgsu.online_market.controller;
 
 
-import cn.hutool.db.sql.Order;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.org.apache.xpath.internal.operations.Or;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.service.impl.GoodServiceImpl;
 import com.zjgsu.online_market.service.impl.OrdersServiceImpl;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
 
 /**
  * <p>
@@ -47,7 +39,7 @@ public class OrdersController {
 //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     @PostMapping("/orders/insert")
     public Result insertOrders(Orders orders){
-        if (orders == null ||( orders != null && orders.getUserphone().length()!=11) )
+        if (orders == null || orders.getUserphone().length() != 11)
         {
             return Result.fail(301,"格式错误",null);
         }
@@ -78,7 +70,7 @@ public class OrdersController {
     }
 
     @PostMapping("/orders/accept/{oid}")
-    public Result accept(@PathVariable(name = "oid",required = true) Long oid) {
+    public Result accept(@PathVariable(name = "oid") Long oid) {
         Orders orders = ordersService.getOne(new QueryWrapper<Orders>().eq("oid",oid));
         if (orders == null)
         {
@@ -88,7 +80,7 @@ public class OrdersController {
         {
             return Result.fail(702,"订单已被接受",null);
         }
-        UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<Orders>();
+        UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("status",1).eq("oid",oid);
         ordersService.getBaseMapper().update(orders,updateWrapper);
         return Result.success(null);
