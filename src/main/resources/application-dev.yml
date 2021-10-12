@@ -12,4 +12,4 @@ mybatis-plus:
 server:
   port: 8081
 xjj:
-  imgfilepath: "D://图片/"
+  imgfilepath: "D:/图片/"

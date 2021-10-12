@@ -64,7 +64,7 @@ public class GoodController {
 
     @GetMapping("/good/alive")
     public Result checkGoodByStatus() {
-        return Result.success(goodService.getBaseMapper().selectList(new QueryWrapper<Good>().ne("status", 2)).isEmpty());
+        return Result.success(goodService.getBaseMapper().selectList(new QueryWrapper<Good>().ne("status", 2)).isEmpty());   //若存在商品的就返回false
     }
 
     @GetMapping("good/frozen")

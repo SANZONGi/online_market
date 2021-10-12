@@ -2,11 +2,13 @@ package com.zjgsu.online_market.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.zjgsu.online_market.common.lang.BASE64DecodedMultipartFile;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Orders;
+import com.zjgsu.online_market.entity.Param;
 import com.zjgsu.online_market.mapper.GoodMapper;
 import com.zjgsu.online_market.mapper.OrdersMapper;
 import com.zjgsu.online_market.service.IGoodService;
@@ -35,6 +37,8 @@ import java.util.UUID;
 public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IGoodService {
     @Autowired
     private GoodMapper goodMapper;
+    @Autowired
+    private Param xjj;
 
     @Autowired
     private OrdersMapper ordersMapper;
@@ -66,7 +70,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
             path = "http://121.5.210.93:8081/static/" + imgname;
 //            System.out.println("linux");
         } else {
-            realpath = "D:/图片/" + imgname;
+            realpath = xjj.getImgfilepath() + imgname;
             path = "http://localhost:8081/static/" + imgname;
 //            System.out.println("other");
         }

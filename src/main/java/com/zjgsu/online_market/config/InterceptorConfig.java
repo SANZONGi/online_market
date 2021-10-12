@@ -1,5 +1,7 @@
 package com.zjgsu.online_market.config;
+import com.zjgsu.online_market.entity.Param;
 import com.zjgsu.online_market.interceptor.JWTInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -10,15 +12,17 @@ import java.io.File;
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
 
-////    jwt拦截
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new JWTInterceptor())
-//                .addPathPatterns("/good/frozen/**")
-//                .addPathPatterns("/users/changepassword")
-//                .addPathPatterns("/orders/**")
-//                .addPathPatterns("/publishGood");
-//    }
+    @Autowired
+    private Param xjj;
+//    jwt拦截
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new JWTInterceptor())
+                .addPathPatterns("/good/frozen/**")
+                .addPathPatterns("/users/changepassword")
+                .addPathPatterns("/orders/**")
+                .addPathPatterns("/publishGood");
+    }
 
 
     //资源访问
@@ -28,7 +32,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         if (File.separator.equals("/")) {
 //            System.out.println("linux");
         } else {
-            res = "file:///D:/图片/";
+            res = "file:///"+xjj.getImgfilepath();
 //            System.out.println("other");
         }
         registry.addResourceHandler("/static/**").addResourceLocations(res);
