@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.sql.SQLException;
+
 
 @Slf4j
 @ControllerAdvice
@@ -42,4 +44,12 @@ public class GlobalExceptionHandler {
         ObjectError objectError = bindingResult.getAllErrors().stream().findFirst().get();
         return Result.fail(401,objectError.getDefaultMessage(),null);
     }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = SQLException.class)
+    public Result handler(SQLException e)
+    {
+        log.error("sql语句错误");
+        return Result.fail(e.getSQLState());
+    }
+
 }

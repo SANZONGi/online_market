@@ -17,7 +17,6 @@ public class JWTInterceptor implements HandlerInterceptor {
         Map<String,Object> map = new HashMap<>();
         String token = request.getHeader("token");
         try {
-
             JwtUtils.verify(token);
             return true;
         } catch (SignatureException e){

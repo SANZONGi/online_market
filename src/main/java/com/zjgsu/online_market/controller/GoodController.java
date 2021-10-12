@@ -47,40 +47,17 @@ public class GoodController {
 
     @PostMapping("/publishGood")
     public Result publishGood(@Param("uid") Long uid, @Param("gname") String gname, @Param("description") String description, @Param("price") Double price, @Param("stock") Integer stock, @Param("image") String image) {
-        if (price < 0 || stock < 0)
-        {
-            return Result.fail(301,"输入格式错误",null);
-        }
-        String imgname = UUID.randomUUID() + ".png";
-        String realpath = null;
-        String path = null;
-        if (File.separator.equals("/")) {
-            realpath = "/home/ubuntu/imgs/" + imgname;
-            path = "http://121.5.210.93:8081/static/" + imgname;
-//            System.out.println("linux");
-        } else {
-            realpath = "D:/图片/" + imgname;
-            path = "http://localhost:8081/static/" + imgname;
-//            System.out.println("other");
-        }
-        MultipartFile file = BASE64DecodedMultipartFile.base64ToMultipart(image);
-        System.out.println(realpath);
-        try {
-            if (file != null) {
-                file.transferTo(new File(realpath));
-                goodService.publishGood(uid, gname, description, price, stock, path, 0);
-            }
-        } catch (IOException e) {
-            return Result.fail(605, e.toString(), null);
-        }
-        return Result.success(null);
+        if (goodService.publsh(uid,gname,description,price,stock,image))
+            return Result.success("发布成功");
+        else
+            return Result.fail("发布失败");
     }
 
     @GetMapping("/good/{gid}")
     public Result goodByid(@PathVariable(name = "gid") Long gid) {
         Good good = goodService.getBaseMapper().selectOne(new QueryWrapper<Good>().eq("gid", gid));
         if (good == null) {
-            return Result.fail(601,"商品不存在",null);
+            return Result.fail("商品不存在");
         }
         return Result.success(good);
     }
@@ -92,11 +69,7 @@ public class GoodController {
 
     @GetMapping("good/frozen")
     public Result goodInSell() {
-        if (ordersService.getBaseMapper().selectList(new QueryWrapper<Orders>().eq("status",1)).isEmpty())
-        {
-            return Result.success(null);
-        }
-        return Result.success(goodService.getBaseMapper().selectList(new QueryWrapper<Good>().eq("status", 1).or().eq("status",0)));
+       return Result.success(goodService.getFrozenGood());
     }
 
     @PostMapping("good/frozen/{gid}")

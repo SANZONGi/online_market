@@ -1,10 +1,12 @@
 package com.zjgsu.online_market.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Orders;
@@ -94,6 +96,15 @@ public class OrdersController {
             return Result.fail(701,"订单不存在",null);
         }
         ordersService.acOrder(oid,3);
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>().eq("status",0).or().eq("status",1);
+        if (ordersService.count(wrapper) == 0)
+        {
+            Good good = goodService.getOne(new QueryWrapper<Good>().eq("gid",orders.getGid()));
+            UpdateWrapper<Good> updateWrapper = new UpdateWrapper<>();
+            good.setUid(null).setGname(null).setDescription(null).setImage(null).setPrice(null).setStock(null);
+            updateWrapper.set("status",0).eq("gid",orders.getGid());
+            goodService.getBaseMapper().update(good,updateWrapper);
+        }
         return Result.success(oid);
     }
 
