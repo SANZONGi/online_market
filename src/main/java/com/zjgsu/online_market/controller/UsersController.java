@@ -5,17 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
-import com.zjgsu.online_market.common.utils.JwtUtils;
 import com.zjgsu.online_market.entity.Users;
 import com.zjgsu.online_market.service.impl.UsersServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletRequest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -34,39 +32,16 @@ public class UsersController {
 
     //@Requestbody负责封装类，不能处理form-data
     @PostMapping("/users/checkuser")
-    public Object checkuser(HttpServletRequest request, @RequestBody LoginDto loginDto) {
-        if (usersService.getBaseMapper().selectOne(new QueryWrapper<Users>().eq("username",loginDto.getUsername())) == null){
-            return Result.fail(201,"用户不存在",null);
-        }
-
-        Users users = usersService.checkUserByUsername(loginDto.getUsername());
-
-        String md5Str = DigestUtils.md5DigestAsHex(loginDto.getPwd().getBytes());
-        if (users != null && users.getPassword().equals(md5Str)) {
-            Map<String,String> map = new HashMap<>();
-            map.put("uid",users.getUid().toString());
-            map.put("username",users.getUsername());
-            String token = JwtUtils.generateToken(map);
-            users.setPassword(null).setPhone(null).setAddress(null);
-            return Result.success(200, token, users);
-        } else {
-            return Result.fail(202, "密码或用户名错误", null);
-        }
+    public Object checkuser(@RequestBody LoginDto loginDto) {
+        return usersService.checkUser(loginDto);
     }
 
     @PostMapping("/users/insertuser")
-    public Object insertuser(@RequestParam("username") String username, @RequestParam("phone") String phone, @RequestParam("password") String password, @RequestParam("address") String address) throws NoSuchAlgorithmException {
+    public Object insertuser(@RequestParam("username") String username, @RequestParam("phone") String phone, @RequestParam("password") String password, @RequestParam("address") String address) {
         if (username == null || username.equals("") || phone == null || phone.length() != 11 || password== null || address == null) {
-            return Result.fail(301,"输入格式错误",null);
+            return Result.fail(400,"传入数据错误",1);
         }
-        Users user = usersService.checkUserByUsername(username);
-        if (user != null) {
-            return Result.fail(203, "该用户已存在", null);
-        } else {
-            String md5Str = DigestUtils.md5DigestAsHex(password.getBytes());
-            usersService.insertUser(username,md5Str,phone,address);
-            return Result.success(200, "成功", null);
-        }
+        return usersService.insertUser(username,phone,password,address);
     }
 
     @PostMapping("/users/changepassword")

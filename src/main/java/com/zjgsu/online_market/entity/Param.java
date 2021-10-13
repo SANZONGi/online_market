@@ -7,13 +7,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @EnableConfigurationProperties(Param.class)
 @ConfigurationProperties(prefix = "xjj")
 public class Param {
-    private String imgfilepath;
+    private String imgFilepath;
 
-    public String getImgfilepath() {
-        return imgfilepath;
+    public String getImgFilePath() {
+        return imgFilepath;
     }
 
-    public void setImgfilepath(String imgfilepath) {
-        this.imgfilepath = imgfilepath;
+    public void setImgFilePath(String imgFilepath) {
+        this.imgFilepath = imgFilepath;
     }
 }

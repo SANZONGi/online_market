@@ -13,7 +13,6 @@ import org.apache.ibatis.annotations.Param;
  * @since 2021-09-09
  */
 public interface IUsersService extends IService<Users>{
-    public Users checkUserByUsername(@Param("username") String username);
-    void insertUser(@Param("username") String username,@Param("password") String password,@Param("phone") String phone,@Param("address") String address);
+    public Users getUserByUsername(@Param("username") String username);
 
 }

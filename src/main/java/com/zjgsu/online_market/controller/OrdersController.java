@@ -1,12 +1,10 @@
 package com.zjgsu.online_market.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.org.apache.xpath.internal.operations.Or;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Orders;
@@ -93,18 +91,11 @@ public class OrdersController {
         Orders orders = ordersService.getOne(new QueryWrapper<Orders>().eq("oid",oid));
         if (orders == null)
         {
-            return Result.fail(701,"订单不存在",null);
+            return Result.fail(400,"订单不存在",1);
         }
-        ordersService.acOrder(oid,3);
-        Wrapper<Orders> wrapper = new QueryWrapper<Orders>().eq("status",0).or().eq("status",1);
-        if (ordersService.count(wrapper) == 0)
-        {
-            Good good = goodService.getOne(new QueryWrapper<Good>().eq("gid",orders.getGid()));
-            UpdateWrapper<Good> updateWrapper = new UpdateWrapper<>();
-            good.setUid(null).setGname(null).setDescription(null).setImage(null).setPrice(null).setStock(null);
-            updateWrapper.set("status",0).eq("gid",orders.getGid());
-            goodService.getBaseMapper().update(good,updateWrapper);
-        }
+        Orders new_order = new Orders().setOid(oid);
+        UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<>(new_order).set("status",3);
+        ordersService.update(updateWrapper);
         return Result.success(oid);
     }
 
@@ -112,11 +103,11 @@ public class OrdersController {
     public Result success(@RequestParam("oid") Long oid,@RequestParam("gid") Long gid) {
         Good good = goodService.getOne(new QueryWrapper<Good>().eq("gid",gid));
         if (good.getStock() <= 0) {
-            return Result.fail(607,"商品已售空",null);
+            return Result.fail(406,"商品已售空",1);
         }
         if (good.getStatus() == 2)
         {
-            return Result.fail(603,"商品下架中",null);
+            return Result.fail(406,"商品下架中",2);
         }
         UpdateWrapper<Good> updateWrapper = new UpdateWrapper<>();
         good.setUid(null).setImage(null).setPrice(null).setGname(null).setDescription(null).setGid(null);

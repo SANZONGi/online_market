@@ -1,18 +1,14 @@
 package com.zjgsu.online_market.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zjgsu.online_market.common.lang.BASE64DecodedMultipartFile;
-import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.entity.Param;
 import com.zjgsu.online_market.mapper.GoodMapper;
 import com.zjgsu.online_market.mapper.OrdersMapper;
 import com.zjgsu.online_market.service.IGoodService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,9 +25,9 @@ import java.util.UUID;
  *
  * @author xjj
  * @since 2021-09-09
- *  0 交易
- *  1 冻结
- *  2 下架
+ * 0 交易
+ * 1 冻结
+ * 2 下架
  */
 @Service
 public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IGoodService {
@@ -45,8 +41,13 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
 
 
     public List<Good> getFrozenGood() {
-        if (ordersMapper.selectCount(new QueryWrapper<Orders>().eq("status", 1)) == 0) {
-            return null;
+        if (ordersMapper.selectCount(new QueryWrapper<Orders>().eq("status", 1)) == 0) { //没有订单激活
+            if (goodMapper.selectCount(new QueryWrapper<Good>().eq("status", 1)) != 0) //有商品还在冻结
+            {
+                return goodMapper.selectList(new QueryWrapper<Good>().eq("status", 1));
+            } else {
+                return null;
+            }
         }
         return goodMapper.selectList(new QueryWrapper<Good>().eq("status", 1).or().eq("status", 0));
     }
@@ -58,8 +59,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     }
 
     public Boolean publsh(Long uid, String gname, String description, Double price, Integer stock, String image) {
-        if (price < 0 || stock < 0 || image == null)
-        {
+        if (price < 0 || stock < 0 || image == null) {
             return false;
         }
         String imgname = UUID.randomUUID() + ".png";
@@ -70,7 +70,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
             path = "http://121.5.210.93:8081/static/" + imgname;
 //            System.out.println("linux");
         } else {
-            realpath = xjj.getImgfilepath() + imgname;
+            realpath = xjj.getImgFilePath() + imgname;
             path = "http://localhost:8081/static/" + imgname;
 //            System.out.println("other");
         }
