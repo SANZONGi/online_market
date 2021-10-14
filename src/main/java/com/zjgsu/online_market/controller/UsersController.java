@@ -1,15 +1,11 @@
 package com.zjgsu.online_market.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
-import com.zjgsu.online_market.entity.Users;
 import com.zjgsu.online_market.service.impl.UsersServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,22 +42,7 @@ public class UsersController {
 
     @PostMapping("/users/changepassword")
     public Result changePassword(@RequestParam("password") String password,@RequestParam("oldpassword") String oldpassword,@RequestParam("uid") Long uid) {
-        Users users = usersService.getOne(new QueryWrapper<Users>().eq("uid",uid));
-        if (users == null) {
-            return Result.fail(201,"用户不存在",null);
-        }
-        UpdateWrapper<Users> updateWrapper = new UpdateWrapper<>();
-        String oldpass_md5str = DigestUtils.md5DigestAsHex(oldpassword.getBytes());
-        if (oldpass_md5str.equals(users.getPassword()))
-        {
-            updateWrapper.set("password",DigestUtils.md5DigestAsHex(password.getBytes()));
-            users.setUid(null).setUsername(null).setPhone(null);
-            usersService.getBaseMapper().update(users,updateWrapper);
-            return Result.success(200,"成功",null);
-        } else
-        {
-            return Result.fail(206,"密码错误",null);
-        }
+        return  usersService.changePassword(password,oldpassword,uid);
     }
 
 }

@@ -3,6 +3,8 @@ package com.zjgsu.online_market.error;
 import com.zjgsu.online_market.common.lang.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLException;
+import java.util.Objects;
 
 
 @Slf4j
@@ -48,4 +51,11 @@ public class GlobalExceptionHandler {
         return Result.fail(400,e.getCause().getMessage(),603);
     }
 
+    @ExceptionHandler(BindException.class)
+    public Result handler(BindException e) {
+        log.error("参数验证未通过"+e.getMessage());
+        BindingResult bindingResult = e.getBindingResult();
+        Objects.requireNonNull(bindingResult);
+        return Result.fail(400, Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage(),604);
+    }
 }

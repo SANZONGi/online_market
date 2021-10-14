@@ -11,6 +11,7 @@ import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.service.impl.GoodServiceImpl;
 import com.zjgsu.online_market.service.impl.OrdersServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -36,12 +37,12 @@ public class OrdersController {
     @Autowired
     private GoodServiceImpl goodService;
 
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+
     @PostMapping("/orders/insert")
-    public Result insertOrders(Orders orders){
-        if (orders == null || orders.getUserphone().length() != 11)
+    public Result insertOrders(@Validated Orders orders){
+        if (orders == null)
         {
-            return Result.fail(301,"格式错误",null);
+            return Result.fail(400,"空订单",null);
         }
         LocalDateTime now = LocalDateTime.now();
         orders.setDate(now);
@@ -109,6 +110,7 @@ public class OrdersController {
         {
             return Result.fail(406,"商品下架中",2);
         }
+
         UpdateWrapper<Good> updateWrapper = new UpdateWrapper<>();
         good.setUid(null).setImage(null).setPrice(null).setGname(null).setDescription(null).setGid(null);
         updateWrapper.set("status",2).set("stock",good.getStock()-1).eq("gid",gid);

@@ -11,6 +11,8 @@ import com.zjgsu.online_market.mapper.OrdersMapper;
 import com.zjgsu.online_market.service.IGoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -40,6 +42,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     private OrdersMapper ordersMapper;
 
 
+    @Transactional(readOnly = true,isolation = Isolation.REPEATABLE_READ)
     public List<Good> getFrozenGood() {
         if (ordersMapper.selectCount(new QueryWrapper<Orders>().eq("status", 1)) == 0) { //没有订单激活
             if (goodMapper.selectCount(new QueryWrapper<Good>().eq("status", 1)) != 0) //有商品还在冻结
@@ -58,6 +61,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
         goodMapper.insert(good);
     }
 
+    @Transactional
     public Boolean publsh(Long uid, String gname, String description, Double price, Integer stock, String image) {
         if (price < 0 || stock < 0 || image == null) {
             return false;
