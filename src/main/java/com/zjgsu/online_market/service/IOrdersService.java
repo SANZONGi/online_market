@@ -1,18 +1,30 @@
 package com.zjgsu.online_market.service;
 
-import com.zjgsu.online_market.entity.Orders;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.zjgsu.online_market.common.lang.Result;
+import com.zjgsu.online_market.entity.Orders;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author xjj
  * @since 2021-09-09
  */
 public interface IOrdersService extends IService<Orders> {
-    public void acOrder(@Param("oid") Long oid, @Param("status") Integer status);
+    void setOrderStatusById(Long oid, Integer status);
+
+    Result insertOrders(Orders orders);
+
+    IPage getHistoryListPage(Integer currentpage, Integer size);
+
+    IPage getOrderPage(Integer currentpage, Integer size);
+
+    Integer successById(Long oid, Long gid);
+
+    Boolean rejectById(Long oid);
+
+    Boolean accept(Long oid);
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author xjj
@@ -15,9 +15,9 @@ import java.util.List;
  */
 
 public interface IGoodService extends IService<Good> {
-    public List<Good> getFrozenGood();
+    List<Good> getFrozenGood();
 
-    public void publishGood(Long uid, String gname, String description, Double price, Integer stock, String path, Integer status);
+    void publishGood(Long uid, String gname, String description, Double price, Integer stock, String path, Integer status);
 
-    public Boolean publsh(Long uid, String gname, String description, Double price, Integer stock, String image);
+    Boolean publish(Long uid, String gname, String description, Double price, Integer stock, String image);
 }

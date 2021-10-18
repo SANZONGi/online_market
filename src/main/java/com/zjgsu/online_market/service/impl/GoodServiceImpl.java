@@ -62,7 +62,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     }
 
     @Transactional
-    public Boolean publsh(Long uid, String gname, String description, Double price, Integer stock, String image) {
+    public Boolean publish(Long uid, String gname, String description, Double price, Integer stock, String image) {
         if (price < 0 || stock < 0 || image == null) {
             return false;
         }

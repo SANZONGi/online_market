@@ -1,11 +1,10 @@
 package com.zjgsu.online_market.mapper;
 
-import com.zjgsu.online_market.entity.Orders;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zjgsu.online_market.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * <p>
@@ -17,6 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Mapper
 public interface OrdersMapper extends BaseMapper<Orders> {
-    @Update("update orders set status = #{status} WHERE oid = #{oid}")
-    public void acOrder(@Param("oid") Long oid, @Param("status") Integer status);
+    @Select("select * from orders where oid = #{oid} for update")
+    Orders getOrderByOidForUpdate(@Param("oid") Long oid);
 }

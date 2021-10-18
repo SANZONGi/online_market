@@ -1,11 +1,9 @@
 package com.zjgsu.online_market.mapper;
 
-import com.zjgsu.online_market.entity.Good;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.*;
-
-import java.math.BigDecimal;
-import java.util.List;
+import com.zjgsu.online_market.entity.Good;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * <p>
@@ -18,8 +16,6 @@ import java.util.List;
 
 @Mapper
 public interface GoodMapper extends BaseMapper<Good>{
-//    @Insert("insert into good(uid,gname,description,price,stock,image,status) values(#{uid},#{gname},#{description},#{price},#{stock},#{image},#{status})")
-//    void publishGood(Long uid, String gname,String description, Double price, Integer stock, String image,Integer status);
-//    @Update("update good set status = #{status}, stock = #{stock} where gid = #{gid}")
-//    void updateGoodStatus_sell(Long gid,Integer stock, Integer status);
+    @Select("select * from good where gid = #{gid} for update")
+    Good selectByGidForUpdate(Long gid);
 }

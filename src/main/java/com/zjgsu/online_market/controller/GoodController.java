@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
-import com.zjgsu.online_market.service.impl.GoodServiceImpl;
+import com.zjgsu.online_market.service.IGoodService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class GoodController {
 
     @Autowired
-    private GoodServiceImpl goodService;
+    private IGoodService goodService;
 
     @GetMapping("/home")
     public Result list() {
@@ -38,7 +38,7 @@ public class GoodController {
     public Result publishGood(@Param("uid") Long uid, @Param("gname") String gname, @Param("description") String description, @Param("price") Double price, @Param("stock") Integer stock, @Param("image") String image) {
         if (uid == null || gname == null || description == null || price == null || stock == null || image == null)
             return Result.fail("发布商品有空对象",603);
-        if (goodService.publsh(uid,gname,description,price,stock,image))
+        if (goodService.publish(uid,gname,description,price,stock,image))
             return Result.success("发布成功");
         else
             return Result.fail("发布失败");

@@ -3,9 +3,10 @@ package com.zjgsu.online_market.controller;
 
 import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
-import com.zjgsu.online_market.service.impl.UsersServiceImpl;
+import com.zjgsu.online_market.service.IUsersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,11 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsersController {
 
     @Autowired
-    UsersServiceImpl usersService;
+    private IUsersService usersService;
 
-    //@Requestbody负责封装类，不能处理form-data
     @PostMapping("/users/checkuser")
-    public Object checkuser(@RequestBody LoginDto loginDto) {
+    public Object checkuser(@RequestBody @Validated LoginDto loginDto) {
         return usersService.checkUser(loginDto);
     }
 
