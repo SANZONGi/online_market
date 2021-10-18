@@ -1,5 +1,6 @@
 package com.zjgsu.online_market.service;
 
+import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,7 +18,11 @@ import java.util.List;
 public interface IGoodService extends IService<Good> {
     List<Good> getFrozenGood();
 
-    void publishGood(Long uid, String gname, String description, Double price, Integer stock, String path, Integer status);
+    Boolean publish(Good good);
 
-    Boolean publish(Long uid, String gname, String description, Double price, Integer stock, String image);
+    Good getGoodById(Long id);
+
+    Result frozeGoodById(Long gid);
+
+    Result unFrozenGood(Long gid);
 }

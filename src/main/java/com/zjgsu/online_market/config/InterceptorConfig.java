@@ -1,17 +1,19 @@
 package com.zjgsu.online_market.config;
-import com.zjgsu.online_market.entity.Param;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.File;
 
 @Configuration
+@PropertySource("classpath:application.yml")
 public class InterceptorConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private Param xjj;
+    @Value("${xjj.imgfilepath}")
+    private String LocalImgPath;
 //    jwt拦截
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
@@ -30,7 +32,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         if (File.separator.equals("/")) {
 //            System.out.println("linux");
         } else {
-            res = "file:///"+xjj.getImgFilePath();
+            res = "file:///"+LocalImgPath;
 //            System.out.println("other");
         }
         registry.addResourceHandler("/static/**").addResourceLocations(res);

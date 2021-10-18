@@ -1,5 +1,6 @@
 package com.zjgsu.online_market.service.impl;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -32,7 +33,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     @Autowired
     private UsersMapper usersMapper;
     @Autowired
-    RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
 
     //    public Users getUserByUsername(String username) {
 //        return usersMapper.getUserByUsername(username);
@@ -57,15 +58,13 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     }
 
     @Deprecated
-    public Object insertUser(String username, String password, String phone, String address) {
-        Users user = usersMapper.getUserByUsername(username);
-        if (user != null) {
+    public Object insertUser(Users users) {
+        if (usersMapper.getUserByUsername(users.getUsername()) != null) {
             return Result.fail(400, "该用户已存在", 2);
         } else {
-            Users new_user = new Users();
-            String md5Str = DigestUtils.md5DigestAsHex(password.getBytes());
-            new_user.setPassword(md5Str).setUsername(username).setPhone(phone).setAddress(address);
-            usersMapper.insert(new_user);
+            String md5Str = DigestUtils.md5DigestAsHex(users.getPassword().getBytes());
+            users.setPassword(md5Str);
+            usersMapper.insert(users);
             return Result.success("成功");
         }
     }
@@ -91,7 +90,17 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     }
 
     @Transactional
-    public Result changePassword(String password, String oldpassword, Long uid) {
+    public Result changePassword(String token,String password, String oldpassword, Long uid) {
+        DecodedJWT tokenBody = JwtUtils.verify(token);
+        //保证是本用户在网页上操作，除非既泄露了密码又泄露了token
+        String tokenUserid =  tokenBody.getClaim("uid").asString();
+        if (!tokenUserid.equals(String.valueOf(uid)))
+        {
+            //forbidden
+            System.out.println(uid);
+            System.out.println(tokenUserid);
+            return Result.fail(403,"用户不一致",null);
+        }
         Users users = getUserByUid(uid.toString());
         if (users == null) {
             return Result.fail(401, "用户不存在", 1);

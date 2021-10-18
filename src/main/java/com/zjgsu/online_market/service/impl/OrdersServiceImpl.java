@@ -27,10 +27,10 @@ import java.time.LocalDateTime;
  */
 @Service
 public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements IOrdersService {
-    private final static Integer GOOD_WAITING = 0;
-    private final static Integer GOOD_EXCHANGING = 1;
-    private final static Integer GOOD_SUCCESS = 2;
-    private final static Integer GOOD_FAIL = 3;
+    private final static Integer ORDER_WAITING = 0;
+    private final static Integer ORDER_EXCHANGING = 1;
+    private final static Integer ORDER_SUCCESS = 2;
+    private final static Integer ORDER_FAIL = 3;
 
     @Autowired
     private GoodMapper goodMapper;
@@ -55,20 +55,20 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
      * 通过id设置订单成功
      * **/
     @Transactional
-    public Boolean accept(Long oid) {
+    public Boolean acceptOrder(Long oid) {
         /*获取order的时候加行锁，防止下面更新之前被并发线程更改*/
         Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
-        if (orders == null || orders.getStatus().equals(GOOD_EXCHANGING)) {
+        if (orders == null || orders.getStatus().equals(ORDER_EXCHANGING)) {
             return false;
         }
-        setOrderStatusById(oid,GOOD_EXCHANGING);
+        setOrderStatusById(oid,ORDER_EXCHANGING);
         return true;
     }
 
     public IPage getHistoryListPage(Integer currentpage,Integer size) {
         Page page = new Page(currentpage,size);
         IPage iPage = ordersMapper.selectPage(page,new QueryWrapper<Orders>().orderByDesc("oid")
-                .eq("status",GOOD_SUCCESS).or().eq("status",GOOD_FAIL));
+                .eq("status",ORDER_SUCCESS).or().eq("status",ORDER_FAIL));
         return iPage;
     }
 
@@ -82,14 +82,14 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         {
             return false;
         }
-        setOrderStatusById(oid,GOOD_FAIL);
+        setOrderStatusById(oid,ORDER_FAIL);
         return true;
     }
 
     public IPage getOrderPage(Integer currentpage,Integer size) {
         Page page = new Page(currentpage,size);
         IPage iPage = ordersMapper.selectPage(page,new QueryWrapper<Orders>().orderByDesc("oid")
-                .eq("status",GOOD_WAITING).or().eq("status",GOOD_EXCHANGING));
+                .eq("status",ORDER_WAITING).or().eq("status",ORDER_EXCHANGING));
         return iPage;
     }
 
@@ -101,9 +101,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         if (good.getStatus() == 2)
             return 2;
         UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid",gid);
-        Good new_good = new Good().setStatus(GOOD_SUCCESS).setStock(good.getStock()-1);
+        Good new_good = new Good().setStatus(ORDER_SUCCESS).setStock(good.getStock()-1);
         goodMapper.update(new_good,updateWrapper);
-        setOrderStatusById(oid,GOOD_SUCCESS);
+        setOrderStatusById(oid,ORDER_SUCCESS);
         return 3;
     }
 }

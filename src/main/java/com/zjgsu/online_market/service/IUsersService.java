@@ -19,9 +19,9 @@ public interface IUsersService extends IService<Users> {
 
     Users getUserByUid(String uid);
 
-    Object insertUser(String username, String password, String phone, String address);
+    Object insertUser(Users users);
 
     Object checkUser(LoginDto loginDto);
 
-    Result changePassword(String password, String oldpassword, Long uid);
+    Result changePassword(String token,String password, String oldpassword, Long uid);
 }

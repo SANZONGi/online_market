@@ -3,14 +3,17 @@ package com.zjgsu.online_market.controller;
 
 import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
+import com.zjgsu.online_market.entity.Users;
 import com.zjgsu.online_market.service.IUsersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -33,16 +36,14 @@ public class UsersController {
     }
 
     @PostMapping("/users/insertuser")
-    public Object insertuser(@RequestParam("username") String username, @RequestParam("phone") String phone, @RequestParam("password") String password, @RequestParam("address") String address) {
-        if (username == null || username.equals("") || phone == null || phone.length() != 11 || password== null || address == null) {
-            return Result.fail(400,"传入数据错误",1);
-        }
-        return usersService.insertUser(username,phone,password,address);
+    public Object insertuser(@RequestBody @Validated Users users) {
+
+        return usersService.insertUser(users);
     }
 
     @PostMapping("/users/changepassword")
-    public Result changePassword(@RequestParam("password") String password,@RequestParam("oldpassword") String oldpassword,@RequestParam("uid") Long uid) {
-        return  usersService.changePassword(password,oldpassword,uid);
+    public Result changePassword(@RequestHeader("token") String token,@NotNull(message = "密码不能为空") String password,@NotNull(message = "旧密码不能为空") String oldpassword,@NotNull(message = "uid不能为空") Long uid) {
+        return  usersService.changePassword(token, password,oldpassword,uid);
     }
 
 }

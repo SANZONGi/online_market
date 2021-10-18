@@ -36,13 +36,13 @@ public class OrdersController {
     }
 
     @GetMapping("/orders")
-    public Result pageList(@RequestParam(name = "currentpage",defaultValue = "1") Integer currentpage,@RequestParam(name = "size",defaultValue = "10") Integer size ) {
-        if (currentpage == null || size == null) return Result.fail("传入了空参数");
+    public Result pageList(Integer currentpage,Integer size ) {
+        if (currentpage == null || size == null) return Result.fail("空参数");
         return Result.success(ordersService.getOrderPage(currentpage,size));
     }
 
     @GetMapping("/orders/history")
-    public Result historyPageList(@RequestParam(name = "currentpage",defaultValue = "1") Integer currentpage,@RequestParam(name = "size",defaultValue = "10") Integer size ) {
+    public Result historyPageList(Integer currentpage, Integer size ) {
         if (currentpage == null || size == null) return Result.fail("空参数");
         IPage iPage = ordersService.getHistoryListPage(currentpage,size);
         return Result.success(iPage);
@@ -55,7 +55,7 @@ public class OrdersController {
 
     @PostMapping("/orders/accept/{oid}")
     public Result accept(@PathVariable(name = "oid") @NotNull(message = "属性值为空") Long oid) {
-        if (ordersService.accept(oid)){
+        if (ordersService.acceptOrder(oid)){
             return Result.success(oid);
         }else {
             return Result.fail("订单无法更改");
@@ -71,7 +71,7 @@ public class OrdersController {
     }
 
     @PostMapping("/orders/success")
-    public Result success(@RequestParam("oid") Long oid,@RequestParam("gid") Long gid) {
+    public Result success(Long oid,Long gid) {
         int flag = ordersService.successById(oid,gid);
         if (flag == 1) {
             return Result.fail(406,"商品已售空",1);
