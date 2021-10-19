@@ -7,6 +7,18 @@ spring:
   config:
     activate:
       on-profile: prod
+  redis:
+    database: 0
+    host: 121.5.210.93
+    port: 6379
+    password:
+    timeout: 8000
+    lettuce:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 50
+        max-wait: -1
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**.xml
 server:
