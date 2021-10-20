@@ -4,6 +4,7 @@ package com.zjgsu.online_market.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zjgsu.online_market.common.annotations.LoginRequired;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.service.IGoodService;
@@ -29,11 +30,13 @@ public class GoodController {
     @Autowired
     private IGoodService goodService;
 
+    @LoginRequired(required = true)
     @GetMapping("/home")
     public Result list() {
         return Result.success( goodService.list(new QueryWrapper<Good>().ne("status", 2)));
     }
 
+    @LoginRequired(required = true)
     @PostMapping("/publishGood")
     public Result publishGood(@Validated Good good) {
         if (goodService.publish(good))
@@ -55,16 +58,19 @@ public class GoodController {
         return Result.success(goodService.count(new QueryWrapper<Good>().ne("status", 2)) == 0);      //若存在商品的就返回false
     }
 
+    @LoginRequired(required = true)
     @GetMapping("good/frozen")
     public Result goodInSell() {
        return Result.success(goodService.getFrozenGood());
     }
 
+    @LoginRequired(required = true)
     @PostMapping("good/frozen/{gid}")
     public Result frozeGood(@PathVariable("gid") @NotNull(message = "gid不能为空") Long gid) {
         return goodService.frozeGoodById(gid);
     }
 
+    @LoginRequired(required = true)
     @PostMapping("good/unfrozen/{gid}")
     public Result unFrozenGood(@PathVariable("gid") @NotNull(message = "gid不能为空") Long gid) {
         return goodService.unFrozenGood(gid);

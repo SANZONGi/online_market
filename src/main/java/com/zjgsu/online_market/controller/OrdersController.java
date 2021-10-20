@@ -3,12 +3,16 @@ package com.zjgsu.online_market.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.zjgsu.online_market.common.annotations.LoginRequired;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.service.IOrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
 
@@ -30,17 +34,20 @@ public class OrdersController {
     @Autowired
     private IOrdersService ordersService;
 
+
     @PostMapping("/orders/insert")
     public Result insertOrders(@Validated @NotNull(message = "空对象") Orders orders){
         return ordersService.insertOrders(orders);
     }
 
+    @LoginRequired(required = true)
     @GetMapping("/orders")
     public Result pageList(Integer currentpage,Integer size ) {
         if (currentpage == null || size == null) return Result.fail("空参数");
         return Result.success(ordersService.getOrderPage(currentpage,size));
     }
 
+    @LoginRequired(required = true)
     @GetMapping("/orders/history")
     public Result historyPageList(Integer currentpage, Integer size ) {
         if (currentpage == null || size == null) return Result.fail("空参数");
@@ -48,11 +55,13 @@ public class OrdersController {
         return Result.success(iPage);
     }
 
+    @LoginRequired(required = true)
     @GetMapping("/orders/list")
     public Result getList(){
         return Result.success(ordersService.getBaseMapper().selectList(new QueryWrapper<Orders>().eq("status",0)));
     }
 
+    @LoginRequired(required = true)
     @PostMapping("/orders/accept/{oid}")
     public Result accept(@PathVariable(name = "oid") @NotNull(message = "属性值为空") Long oid) {
         if (ordersService.acceptOrder(oid)){
@@ -62,6 +71,7 @@ public class OrdersController {
         }
     }
 
+    @LoginRequired(required = true)
     @PostMapping("/orders/reject/{oid}")
     public Result reject(@PathVariable(name = "oid") Long oid) {
         if (ordersService.rejectById(oid) == false)
@@ -70,6 +80,7 @@ public class OrdersController {
             return Result.success(oid);
     }
 
+    @LoginRequired(required = true)
     @PostMapping("/orders/success")
     public Result success(Long oid,Long gid) {
         int flag = ordersService.successById(oid,gid);

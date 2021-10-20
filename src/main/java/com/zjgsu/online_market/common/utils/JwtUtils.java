@@ -22,7 +22,7 @@ public class JwtUtils {
      */
     public static String generateToken(Map<String, String> mp) {
         Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.DATE, 7);
+        instance.add(Calendar.DATE, 1);
         JWTCreator.Builder builder = JWT.create();
         mp.forEach(builder::withClaim);
         return builder.withExpiresAt(instance.getTime()).sign(Algorithm.HMAC256(secret));

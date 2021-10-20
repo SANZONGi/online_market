@@ -1,6 +1,7 @@
 package com.zjgsu.online_market.controller;
 
 
+import com.zjgsu.online_market.common.annotations.LoginRequired;
 import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Users;
@@ -41,6 +42,7 @@ public class UsersController {
         return usersService.insertUser(users);
     }
 
+    @LoginRequired(required = true)
     @PostMapping("/users/changepassword")
     public Result changePassword(@RequestHeader("token") String token,@NotNull(message = "密码不能为空") String password,@NotNull(message = "旧密码不能为空") String oldpassword,@NotNull(message = "uid不能为空") Long uid) {
         return  usersService.changePassword(token, password,oldpassword,uid);
