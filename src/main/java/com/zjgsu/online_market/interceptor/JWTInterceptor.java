@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zjgsu.online_market.common.annotations.LoginRequired;
 import com.zjgsu.online_market.common.utils.JwtUtils;
 import io.jsonwebtoken.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -16,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class JWTInterceptor implements HandlerInterceptor {
     @Autowired
@@ -28,6 +30,7 @@ public class JWTInterceptor implements HandlerInterceptor {
 //            System.out.println("非方法");
             return true;
         }
+        log.info("是方法");
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
         LoginRequired annotation = method.getAnnotation(LoginRequired.class);
