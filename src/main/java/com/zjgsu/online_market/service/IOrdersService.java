@@ -14,13 +14,13 @@ import com.zjgsu.online_market.entity.Orders;
  * @since 2021-09-09
  */
 public interface IOrdersService extends IService<Orders> {
-    void setOrderStatusById(Long oid, Integer status);
+    Integer setOrderStatusById(Long oid, Integer status);
 
     Result insertOrders(Orders orders);
 
-    IPage getHistoryListPage(Integer currentpage, Integer size);
+    IPage getHistoryListPage(Long currentpage, Integer size);
 
-    IPage getOrderPage(Integer currentpage, Integer size);
+    IPage getOrderPage(Long currentpage, Integer size);
 
     Integer successById(Long oid, Long gid);
 

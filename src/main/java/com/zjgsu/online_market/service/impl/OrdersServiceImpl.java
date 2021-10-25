@@ -38,10 +38,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     @Autowired
     private OrdersMapper ordersMapper;
 
-    public void setOrderStatusById(Long oid, Integer status) {
-        Orders orders = new Orders().setStatus(status);
-        UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<Orders>().eq("oid", oid);
-        ordersMapper.update(orders, updateWrapper);
+    public Integer setOrderStatusById(Long oid, Integer status) {
+        UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<Orders>().eq("oid", oid).set("status",status);
+        return ordersMapper.update(null,updateWrapper);
     }
 
     public Result insertOrders(Orders orders) {
@@ -61,11 +60,12 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         if (orders == null || orders.getStatus().equals(ORDER_EXCHANGING)) {
             return false;
         }
-        setOrderStatusById(oid,ORDER_EXCHANGING);
+        if (setOrderStatusById(oid,ORDER_EXCHANGING) == 0)
+            return false;
         return true;
     }
 
-    public IPage getHistoryListPage(Integer currentpage,Integer size) {
+    public IPage getHistoryListPage(Long currentpage,Integer size) {
         Page page = new Page(currentpage,size);
         IPage iPage = ordersMapper.selectPage(page,new QueryWrapper<Orders>().orderByDesc("oid")
                 .eq("status",ORDER_SUCCESS).or().eq("status",ORDER_FAIL));
@@ -82,11 +82,12 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         {
             return false;
         }
-        setOrderStatusById(oid,ORDER_FAIL);
+        if (setOrderStatusById(oid,ORDER_FAIL) == 0)
+            return false;
         return true;
     }
 
-    public IPage getOrderPage(Integer currentpage,Integer size) {
+    public IPage getOrderPage(Long currentpage,Integer size) {
         Page page = new Page(currentpage,size);
         IPage iPage = ordersMapper.selectPage(page,new QueryWrapper<Orders>().orderByDesc("oid")
                 .eq("status",ORDER_WAITING).or().eq("status",ORDER_EXCHANGING));
@@ -100,9 +101,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
             return 1;
         if (good.getStatus() == 2)
             return 2;
-        UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid",gid);
-        Good new_good = new Good().setStatus(ORDER_SUCCESS).setStock(good.getStock()-1);
-        goodMapper.update(new_good,updateWrapper);
+        UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid",gid).eq("stock",good.getStock())
+                .set("status",ORDER_SUCCESS).set("stock",good.getStock()-1);
+        goodMapper.update(null,updateWrapper);
         setOrderStatusById(oid,ORDER_SUCCESS);
         return 3;
     }

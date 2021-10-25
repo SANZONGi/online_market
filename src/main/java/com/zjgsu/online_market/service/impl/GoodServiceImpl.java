@@ -113,9 +113,8 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
         if (good.getStatus().equals(GOOD_SELLOUT))
             return Result.fail(406,"商品下架中",null);
 
-        UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid",gid);
-        good.setStatus(1);
-        goodMapper.update(good,updateWrapper);
+        UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid",gid).set("status",GOOD_FROZEN);
+        goodMapper.update(null,updateWrapper);
         redisTemplate.delete(String.valueOf(gid));
         return Result.success(gid);
     }

@@ -4,7 +4,6 @@ package com.zjgsu.online_market.controller;
 import com.zjgsu.online_market.common.annotations.LoginRequired;
 import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
-import com.zjgsu.online_market.entity.Users;
 import com.zjgsu.online_market.service.IUsersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +35,11 @@ public class UsersController {
         return usersService.checkUser(loginDto);
     }
 
-    @PostMapping("/users/insertuser")
-    public Object insertuser(@RequestBody @Validated Users users) {
-
-        return usersService.insertUser(users);
-    }
+//    @PostMapping("/users/insertuser")
+//    public Object insertuser(@RequestBody @Validated Users users) {
+//
+//        return usersService.insertUser(users);
+//    }
 
     @LoginRequired(required = true)
     @PostMapping("/users/changepassword")

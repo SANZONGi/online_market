@@ -25,3 +25,4 @@ server:
   port: 8081
 xjj:
   imgfilepath: "/home/ubuntu/imgs/"
+  secret: "5s15d1512S3Sss8323657ecjkhdefdafaefsgevdsD"

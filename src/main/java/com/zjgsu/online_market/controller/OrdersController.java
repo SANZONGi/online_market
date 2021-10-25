@@ -4,15 +4,14 @@ package com.zjgsu.online_market.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zjgsu.online_market.common.annotations.LoginRequired;
+import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.service.IOrdersService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 
@@ -35,6 +34,7 @@ public class OrdersController {
     private IOrdersService ordersService;
 
 
+    @ApiOperation(value = "创建订单")
     @PostMapping("/orders/insert")
     public Result insertOrders(@Validated @NotNull(message = "空对象") Orders orders){
         return ordersService.insertOrders(orders);
@@ -42,23 +42,22 @@ public class OrdersController {
 
     @LoginRequired(required = true)
     @GetMapping("/orders")
-    public Result pageList(Integer currentpage,Integer size ) {
-        if (currentpage == null || size == null) return Result.fail("空参数");
-        return Result.success(ordersService.getOrderPage(currentpage,size));
+    public Result pageList(@Validated PageDto pageDto) {
+        return Result.success(ordersService.getOrderPage(pageDto.getCurrentpage(),pageDto.getSize()));
     }
 
     @LoginRequired(required = true)
     @GetMapping("/orders/history")
-    public Result historyPageList(Integer currentpage, Integer size ) {
-        if (currentpage == null || size == null) return Result.fail("空参数");
-        IPage iPage = ordersService.getHistoryListPage(currentpage,size);
+    public Result historyPageList(@RequestBody @Validated PageDto pageDto) {
+        if (pageDto == null) return Result.fail("空参数");
+        IPage iPage = ordersService.getHistoryListPage(pageDto.getCurrentpage(),pageDto.getSize());
         return Result.success(iPage);
     }
 
     @LoginRequired(required = true)
     @GetMapping("/orders/list")
     public Result getList(){
-        return Result.success(ordersService.getBaseMapper().selectList(new QueryWrapper<Orders>().eq("status",0)));
+        return Result.success(ordersService.list(new QueryWrapper<Orders>().eq("status",0)));
     }
 
     @LoginRequired(required = true)

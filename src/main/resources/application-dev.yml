@@ -9,7 +9,7 @@ spring:
       on-profile: dev
   redis:
     database: 0
-    host: 121.5.210.93
+    host: localhost
     port: 6379
     password:
     timeout: 8000
@@ -21,9 +21,10 @@ spring:
         max-wait: -1
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**.xml
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
 server:
   port: 8081
 xjj:
   imgfilepath: "D:/图片/"
+  secret: "5s15d1512S3Sss8323657ecjkhdefdafaefsgevdsD"

@@ -19,7 +19,7 @@ public interface IUsersService extends IService<Users> {
 
     Users getUserByUid(String uid);
 
-    Object insertUser(Users users);
+//    Object insertUser(Users users);
 
     Object checkUser(LoginDto loginDto);
 

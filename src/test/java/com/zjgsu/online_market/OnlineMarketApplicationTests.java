@@ -1,39 +1,25 @@
 package com.zjgsu.online_market;
 
-import com.zjgsu.online_market.entity.Users;
-import com.zjgsu.online_market.mapper.GoodMapper;
+import com.zjgsu.online_market.common.utils.EncypterUtil;
+import com.zjgsu.online_market.service.impl.UsersServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.annotation.Resource;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class OnlineMarketApplicationTests {
-    @Value("${xjj.imgfilepath}")
-    private String path;
+    @Autowired
+    private EncypterUtil encypterUtil;
 //    private Param xjj;
     @Autowired
-//    private OrdersMapper ordersMapper;
+    private UsersServiceImpl usersService;
 //        RedisTemplate redisTemplate;
-    private GoodMapper goodService;
 //    private GoodController goodController;
     @Test
     void contextLoads() {
-
-        class Stu{
-            @Resource
-            public void getUser(Users user)
-            {
-                System.out.println(user);
-            }
-        }
-        Stu stu = new Stu();
-        stu.getUser(null);
 //        DecodedJWT tokenBody = JwtUtils.verify("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiI1IiwiZXhwIjoxNjM1MTYzNzcxLCJ1c2VybmFtZSI6InhqaiJ9.sxPu_oz7njw8pFMiz96CmsNCjNrYOLiqGVwlb5RJgcM");
 //        保证是本用户在网页上操作，除非既泄露了密码又泄露了token
 //        System.out.println(tokenBody.getClaim("uid").asString());
@@ -44,9 +30,13 @@ class OnlineMarketApplicationTests {
 //        } catch (SQLException throwables) {
 //            throwables.printStackTrace();
 //        }
-        System.out.println(goodService.selectById(47));
+//        System.out.println(encypterUtil.Encrypt("1"));
+//        usersService.insertUser(new Users().setPhone("").setPassword(encypterUtil.Encrypt("1")).setUsername("xjj").setAddress("1").setPhone("1111111111"));
 //        redisTemplate.opsForValue().set("1","1");
 //        System.out.println(redisTemplate.opsForValue().get("1"));
+        System.out.println(encypterUtil.Decrypt("wEUAsyBgjO1khxzsgCN8RA=="));
     }
 
+    //AzJn93jPAH8G2/2uyC306gdibQqy9Bir/I+64jKfKYpsqCnWEAuwPA==
+    //wEUAsyBgjO1khxzsgCN8RA==
 }
