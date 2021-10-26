@@ -56,10 +56,15 @@ public class OrdersController {
     }
 
     @LoginRequired(required = true)
-    @PostMapping("/orders/accept/{oid}")
-    public Result accept(@PathVariable(name = "oid") @NotNull(message = "属性值为空") Long oid) {
-        if (ordersService.acceptOrder(oid)){
-            return Result.success(oid);
+    @PostMapping("/orders/accept")
+    public Result accept(@NotNull(message = "oid为空") Long oid,@NotNull(message = "gid为空") Long gid) {
+        int res = ordersService.acceptOrder(oid,gid);
+        if (res == 200)
+        {
+            return Result.success("成功");
+        }
+        if (res == 1){
+            return Result.fail("售空");
         }else {
             return Result.fail("订单无法更改");
         }

@@ -26,5 +26,5 @@ public interface IOrdersService extends IService<Orders> {
 
     Boolean rejectById(Long oid);
 
-    Boolean acceptOrder(Long oid);
+    Integer acceptOrder(Long oid,Long gid);
 }

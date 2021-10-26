@@ -58,15 +58,19 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
      * 通过id设置订单成功
      * **/
     @Transactional
-    public Boolean acceptOrder(Long oid) {
+    public Integer acceptOrder(Long oid,Long gid) {
         /*获取order的时候加行锁，防止下面更新之前被并发线程更改*/
         Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
+        if (goodMapper.selectById(gid).getStock() == 0)
+        {
+            return 1;
+        }
         if (orders == null || orders.getStatus().equals(ORDER_EXCHANGING)) {
-            return false;
+            return 2;
         }
         if (setOrderStatusById(oid,ORDER_EXCHANGING) == 0)
-            return false;
-        return true;
+            return 3;
+        return 200;
     }
 
     public IPage getHistoryListPage(Long currentpage,Integer size) {
