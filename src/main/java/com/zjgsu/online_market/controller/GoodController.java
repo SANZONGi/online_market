@@ -34,7 +34,6 @@ public class GoodController {
     @Autowired
     private IGoodService goodService;
 
-    @LoginRequired(required = true)
     @GetMapping("/home")
     public Result list() {
         return Result.success( goodService.list(new QueryWrapper<Good>().ne("status", 2)));

@@ -38,13 +38,11 @@ public class OrdersController {
         return ordersService.insertOrders(orders);
     }
 
-    @LoginRequired(required = true)
     @GetMapping("/orders")
     public Result pageList(@Validated PageDto pageDto) {
         return Result.success(ordersService.getOrderPage(pageDto.getCurrentpage(),pageDto.getSize()));
     }
 
-    @LoginRequired(required = true)
     @GetMapping("/orders/history")
     public Result historyPageList(@RequestBody @Validated PageDto pageDto) {
         if (pageDto == null) return Result.fail("空参数");
@@ -52,7 +50,6 @@ public class OrdersController {
         return Result.success(iPage);
     }
 
-    @LoginRequired(required = true)
     @GetMapping("/orders/list")
     public Result getList(){
         return Result.success(ordersService.list(new QueryWrapper<Orders>().eq("status",0)));

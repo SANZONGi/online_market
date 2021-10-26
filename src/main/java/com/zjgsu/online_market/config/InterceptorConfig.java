@@ -30,7 +30,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         log.info("加载拦截器");
 
         registry.addInterceptor(jwtInterceptor)
-                    .addPathPatterns("/users/changepassword");
+                    .addPathPatterns("/**");
 //                .addPathPatterns("/**")
 //                .excludePathPatterns("/users/checkuser")
 //                .excludePathPatterns("/static/**")
