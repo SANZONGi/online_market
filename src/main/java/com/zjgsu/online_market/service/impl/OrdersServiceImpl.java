@@ -12,6 +12,7 @@ import com.zjgsu.online_market.mapper.GoodMapper;
 import com.zjgsu.online_market.mapper.OrdersMapper;
 import com.zjgsu.online_market.service.IOrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
 
     @Autowired
     private GoodMapper goodMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private OrdersMapper ordersMapper;
@@ -104,6 +108,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid",gid).eq("stock",good.getStock())
                 .set("status",ORDER_SUCCESS).set("stock",good.getStock()-1);
         goodMapper.update(null,updateWrapper);
+        redisTemplate.delete(String.valueOf(gid));
         setOrderStatusById(oid,ORDER_SUCCESS);
         return 3;
     }

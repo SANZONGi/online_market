@@ -9,10 +9,12 @@ import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.service.IGoodService;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
 
@@ -32,14 +34,12 @@ public class GoodController {
     @Autowired
     private IGoodService goodService;
 
-    @ApiOperation(value = "商品列表获取")
     @LoginRequired(required = true)
     @GetMapping("/home")
     public Result list() {
         return Result.success( goodService.list(new QueryWrapper<Good>().ne("status", 2)));
     }
 
-    @ApiOperation(value = "商品发布")
     @LoginRequired(required = true)
     @PostMapping("/publishGood")
     public Result publishGood(@Validated Good good) {
@@ -49,7 +49,6 @@ public class GoodController {
             return Result.fail("发布失败");
     }
 
-    @ApiOperation(value = "根据商品id获取")
     @GetMapping("/good/{gid}")
     public Result getGoodById(@PathVariable(name = "gid") Long gid) {
         Good good = goodService.getGoodById(gid);
@@ -57,32 +56,27 @@ public class GoodController {
             return Result.fail("商品不存在");
         return Result.success(good);
     }
-    @ApiOperation(value = "若存在未下架商品的就返回false")
     @GetMapping("/good/alive")
     public Result checkGoodExist() {
         return Result.success(goodService.count(new QueryWrapper<Good>().ne("status", 2)) == 0);      //若存在商品的就返回false
     }
 
-    @ApiOperation(value = "获取冻结状态商品")
     @LoginRequired(required = true)
     @GetMapping("good/frozen")
     public Result goodInSell() {
        return Result.success(goodService.getFrozenGood());
     }
 
-    @ApiOperation(value = "根据id冻结商品")
     @LoginRequired(required = true)
     @PostMapping("good/frozen/{gid}")
     public Result frozeGood(@PathVariable("gid") @NotNull(message = "gid不能为空") Long gid) {
         return goodService.frozeGoodById(gid);
     }
-    @ApiOperation(value = "根据id解冻商品")
     @LoginRequired(required = true)
     @PostMapping("good/unfrozen/{gid}")
     public Result unFrozenGood(@PathVariable("gid") @NotNull(message = "gid不能为空") Long gid) {
         return goodService.unFrozenGood(gid);
     }
-    @ApiOperation(value = "历史商品列表")
     @GetMapping("/good/listofhis")
     public Result listOfHis(@Validated PageDto pageDto) {
         if (pageDto == null) return Result.fail("传入空参数");

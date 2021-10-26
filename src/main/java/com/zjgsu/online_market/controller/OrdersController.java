@@ -8,7 +8,6 @@ import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.service.IOrdersService;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,6 @@ public class OrdersController {
     private IOrdersService ordersService;
 
 
-    @ApiOperation(value = "创建订单")
     @PostMapping("/orders/insert")
     public Result insertOrders(@Validated @NotNull(message = "空对象") Orders orders){
         return ordersService.insertOrders(orders);
