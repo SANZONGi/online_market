@@ -44,7 +44,7 @@ public class OrdersController {
     }
 
     @GetMapping("/orders/history")
-    public Result historyPageList(@RequestBody @Validated PageDto pageDto) {
+    public Result historyPageList(@Validated PageDto pageDto) {
         if (pageDto == null) return Result.fail("空参数");
         IPage iPage = ordersService.getHistoryListPage(pageDto.getCurrentpage(),pageDto.getSize());
         return Result.success(iPage);
