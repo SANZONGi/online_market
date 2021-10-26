@@ -26,7 +26,7 @@ public class JWTInterceptor implements HandlerInterceptor {
 ////            System.out.println("非方法");
 //            return true;
 //        }
-        log.info("success");
+        log.info("进入拦截");
 //        HandlerMethod handlerMethod = (HandlerMethod) handler;
 //        Method method = handlerMethod.getMethod();
 //        LoginRequired annotation = method.getAnnotation(LoginRequired.class);

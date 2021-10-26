@@ -1,6 +1,7 @@
 package com.zjgsu.online_market.config;
 
 import com.zjgsu.online_market.interceptor.JWTInterceptor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.File;
 
+@Slf4j
 @Configuration
 @PropertySource("classpath:application.yml")
 public class InterceptorConfig implements WebMvcConfigurer {
@@ -20,13 +22,21 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Autowired
     private JWTInterceptor jwtInterceptor;
 
+
 //    jwt拦截
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new JWTInterceptor())
-                .addPathPatterns("/**")
-                .excludePathPatterns("/users/checkuser")
-                .excludePathPatterns("/static/**");
+
+        log.info("加载拦截器");
+
+        registry.addInterceptor(jwtInterceptor)
+                    .addPathPatterns("/users/changepassword");
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/users/checkuser")
+//                .excludePathPatterns("/static/**")
+//                .excludePathPatterns("/home")
+//                .excludePathPatterns("/good/**")
+//                .excludePathPatterns("/orders/insert");
     }
 
 
