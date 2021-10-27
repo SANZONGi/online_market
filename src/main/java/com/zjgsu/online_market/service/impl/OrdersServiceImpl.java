@@ -105,6 +105,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     @Transactional
     public Integer successById(Long oid,Long gid) {
         Good good = goodMapper.selectByGidForUpdate(gid);
+        if (good == null) return 3;
         if (good.getStock() <= 0)
             return 1;
         if (good.getStatus() == 2)

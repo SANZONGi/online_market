@@ -84,6 +84,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             map.put("uid", users.getUid().toString());
             map.put("username", users.getUsername());
             String token = jwtUtils.generateToken(map);
+            System.out.println(token);
             users.setPassword(null).setPhone(null).setAddress(null);
             return Result.success(200, token, users);
         } else {

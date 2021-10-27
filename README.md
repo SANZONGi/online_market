@@ -8,6 +8,8 @@
 
 #### 4,Mysql
 
+#### 5,redis
+
 ## 工具
 
 #### 1,postman
