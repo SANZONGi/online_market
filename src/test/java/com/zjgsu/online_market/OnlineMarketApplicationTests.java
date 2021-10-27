@@ -1,15 +1,12 @@
 package com.zjgsu.online_market;
 
 import com.zjgsu.online_market.common.utils.EncypterUtil;
-import com.zjgsu.online_market.common.utils.JwtUtils;
 import com.zjgsu.online_market.service.impl.UsersServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -24,12 +21,6 @@ class OnlineMarketApplicationTests {
 //    private GoodController goodController;
     @Test
     void contextLoads() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("username","xjj");
-        map.put("uid","1");
-        System.out.println(new JwtUtils().generateToken(
-                map
-        ));
 //        usersService.insertUser(new Users().setUsername("admin1").setPassword(encypterUtil.Encrypt("1")).setPhone("11111111111").setAddress("address"));
 //        DecodedJWT tokenBody = JwtUtils.verify("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiI1IiwiZXhwIjoxNjM1MTYzNzcxLCJ1c2VybmFtZSI6InhqaiJ9.sxPu_oz7njw8pFMiz96CmsNCjNrYOLiqGVwlb5RJgcM");
 //        保证是本用户在网页上操作，除非既泄露了密码又泄露了token
