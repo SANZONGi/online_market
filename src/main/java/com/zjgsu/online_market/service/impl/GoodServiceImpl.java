@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zjgsu.online_market.common.lang.BASE64DecodedMultipartFile;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
+import com.zjgsu.online_market.entity.Img;
 import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.mapper.GoodMapper;
+import com.zjgsu.online_market.mapper.ImgMapper;
 import com.zjgsu.online_market.mapper.OrdersMapper;
 import com.zjgsu.online_market.service.IGoodService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,8 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     private GoodMapper goodMapper;
     @Autowired
     private RedisTemplate redisTemplate;
-
+    @Autowired
+    private ImgMapper imgMapper;
     @Value("${xjj.imgfilepath}")
     private String LocalIngPath;
 
@@ -78,31 +81,34 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
 
 
     @Transactional
-    public Boolean publish(Good good) {
-        String imgname = UUID.randomUUID() + ".png";
-        String realpath = null;
-        String path = null;
+    public Integer publish(Good good, List<MultipartFile> files) throws IOException {
+        String realpath;
+        String path;
         if (File.separator.equals("/")) {
-            realpath = "/home/ubuntu/imgs/" + imgname;
-            path = "http://121.5.210.93:8081/static/" + imgname;
-//            System.out.println("linux");
+            realpath = "/home/ubuntu/imgs/";
+            path = "http://121.5.210.93:8081/static/";
         } else {
-            realpath = LocalIngPath + imgname;
-            path = "http://localhost:8081/static/" + imgname;
-//            System.out.println("other");
+            realpath = LocalIngPath;
+            path = "http://localhost:8081/static/";
         }
-        MultipartFile file = BASE64DecodedMultipartFile.base64ToMultipart(good.getImage());
-        try {
-            if (file != null) {
-                file.transferTo(new File(realpath));
-                good.setImage(path).setStatus(0);
-                goodMapper.insert(good);
+        for (MultipartFile file : files) {
+            if (file == null) {
+                return 2;
             }
-        } catch (IOException e) {
-            return false;
         }
-        return true;
+        goodMapper.insertSelectiveHasKey(good);
+        System.out.println(good);
+        for (MultipartFile file : files) {
+            String origin = file.getOriginalFilename();
+            if (origin == null) origin = ".jpg";
+            String fileName = UUID.randomUUID().toString()+origin.substring(origin.lastIndexOf('.'));
+            file.transferTo(new File(realpath+fileName));
+            imgMapper.insert(new Img(good.getGid(),path+fileName));
+        }
+
+        return 0;
     }
+
 
     @Transactional
     public Result frozeGoodById(Long gid) {

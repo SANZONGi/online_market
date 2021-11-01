@@ -3,7 +3,9 @@ package com.zjgsu.online_market.service;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ import java.util.List;
 public interface IGoodService extends IService<Good> {
     List<Good> getFrozenGood();
 
-    Boolean publish(Good good);
+    Integer publish(Good good, List<MultipartFile> files) throws IOException;
 
     Good getGoodById(Long id);
 

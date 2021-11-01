@@ -27,24 +27,18 @@ import java.time.LocalDateTime;
 public class Orders implements Serializable {
 
     @NotNull(message = "商品id不能为空")
+    @Min(value = 1)
     private Long gid;
 
     @TableId(type = IdType.AUTO)
     private Long oid;
 
-    @NotNull(message = "用户名不能为空")
-    private String username;
-
-    @NotNull(message = "用户地址不能为空")
-    private String useraddress;
-
-    @NotNull(message = "用户电话不能为空")
-    @Length(max = 11,min = 11,message = "电话号码为11位")
-    @Pattern(regexp = "[0-9]{11}",message = "电话号码格式错误")
-    private String userphone;
+    @NotNull(message = "用户id不能为空")
+    @Min(value = 1)
+    private Long uid;
 
     @NotNull(message = "订购数量不能为空")
-    @Min(value = 0,message = "商品数量错误")
+    @Min(value = 1)
     private Integer number;
 
     private Double amount;

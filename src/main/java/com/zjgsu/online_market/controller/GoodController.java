@@ -12,12 +12,12 @@ import com.zjgsu.online_market.service.IGoodService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * <p>
@@ -43,12 +43,13 @@ public class GoodController {
 
     @ApiOperation("发布商品")
     @LoginRequired(required = true)
-    @PostMapping("/publishGood")
-    public Result publishGood(@Validated Good good) {
-        if (goodService.publish(good))
+    @PutMapping("/good")
+    public Result publishGood(@Validated Good good,@NotNull(message = "无图片") List<MultipartFile> files) throws IOException {
+        int res = goodService.publish(good,files);
+        if (res == 0)
             return Result.success("发布成功");
         else
-            return Result.fail("发布失败");
+            return Result.fail("发布失败",res);
     }
 
     @ApiOperation("根据id获取商品")
@@ -59,6 +60,14 @@ public class GoodController {
             return Result.fail("商品不存在");
         return Result.success(good);
     }
+
+    @ApiOperation("根据搜索获取商品")
+    @GetMapping("/good/search/{val}")
+    public Result getGoodBySearch(@PathVariable @NotNull(message = "空参数") String val)
+    {
+        return Result.success("");
+    }
+
     @ApiOperation("是否存在未下架商品")
     @GetMapping("/good/alive")
     public Result checkGoodExist() {

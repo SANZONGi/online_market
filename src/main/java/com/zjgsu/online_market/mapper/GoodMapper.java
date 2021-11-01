@@ -2,7 +2,9 @@ package com.zjgsu.online_market.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zjgsu.online_market.entity.Good;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +22,9 @@ import org.springframework.stereotype.Repository;
 public interface GoodMapper extends BaseMapper<Good>{
     @Select("select * from good where gid = #{gid} for update")
     Good selectByGidForUpdate(Long gid);
+
+    @Options(useGeneratedKeys = true, keyProperty = "gid", keyColumn = "gid")
+    @Insert("insert  into good (uid,gname,price,stock,status,description,pri_cata,sec_cata) values (#{uid},#{gname},#{price},#{stock},#{status},#{description},#{priCatalogue},#{secCatalogue})")
+    void insertSelectiveHasKey(Good good);
+
 }

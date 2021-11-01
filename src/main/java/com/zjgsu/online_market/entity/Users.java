@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 /**
@@ -35,12 +37,11 @@ public class Users implements Serializable {
     @NotBlank(message = "密码不能为空")
     private String password;
 
-    @NotNull(message = "手机号不能为空")
-    @NotBlank(message = "手机号不能为空")
+    @NotNull(message = "用户电话不能为空")
+    @Pattern(regexp = "[0-9]{11}",message = "电话号码格式错误")
     private String phone;
 
     @NotNull(message = "地址不能为空")
     @NotBlank(message = "地址不能为空")
     private String address;
-
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -23,9 +24,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = RuntimeException .class)
     public Result handler(RuntimeException e)
     {
-        log.error("运行时异常---",e);
+        log.error("运行时异常",e);
         return Result.fail(400,e.getMessage(),600);
     }
+
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = SQLException.class)
@@ -43,7 +46,6 @@ public class GlobalExceptionHandler {
         return Result.fail(400,e.getMessage(),602);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NullPointerException.class)
     public Result handler(NullPointerException e)
     {
@@ -57,5 +59,12 @@ public class GlobalExceptionHandler {
         BindingResult bindingResult = e.getBindingResult();
         Objects.requireNonNull(bindingResult);
         return Result.fail(400, Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage(),604);
+    }
+
+    @ExceptionHandler(value = IOException.class)
+    public Result handler(IOException e)
+    {
+        log.error("IO发生异常");
+        return Result.fail(400,e.getMessage(),605);
     }
 }

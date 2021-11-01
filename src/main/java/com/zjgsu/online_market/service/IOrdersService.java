@@ -18,7 +18,7 @@ public interface IOrdersService extends IService<Orders> {
 
     Result insertOrders(Orders orders);
 
-    IPage getHistoryListPage(Long currentpage, Integer size);
+    IPage getHistoryListPage(Long currentpage, Integer size,Integer uid);
 
     IPage getOrderPage(Long currentpage, Integer size);
 

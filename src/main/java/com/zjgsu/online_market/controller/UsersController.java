@@ -4,15 +4,13 @@ package com.zjgsu.online_market.controller;
 import com.zjgsu.online_market.common.annotations.LoginRequired;
 import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
+import com.zjgsu.online_market.entity.Users;
 import com.zjgsu.online_market.service.IUsersService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 
@@ -32,16 +30,21 @@ public class UsersController {
     private IUsersService usersService;
 
     @ApiOperation("检查用户")
-    @PostMapping("/users/checkuser")
-    public Object checkuser(@RequestBody @Validated LoginDto loginDto) {
+    @PostMapping("/users/check")
+    public Object checkUser(@RequestBody @Validated LoginDto loginDto) {
         return usersService.checkUser(loginDto);
     }
 
-    //    @PostMapping("/users/insertuser")
-//    public Object insertuser(@RequestBody @Validated Users users) {
-//
-//        return usersService.insertUser(users);
-//    }
+    @PutMapping("/users")
+    public Result addUser(@RequestBody @Validated Users users) {
+        Integer res = usersService.insertUser(users);
+        if (res == 1)
+        {
+            return Result.success("成功");
+        } else {
+            return Result.fail("创建失败",res);
+        }
+    }
     @ApiOperation("修改密码")
     @LoginRequired(required = true)
     @PostMapping("/users/changepassword")

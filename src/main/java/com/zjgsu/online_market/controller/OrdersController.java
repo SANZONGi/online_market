@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  * <p>
@@ -33,9 +34,8 @@ public class OrdersController {
     @Autowired
     private IOrdersService ordersService;
 
-
     @ApiOperation("创建订单")
-    @PostMapping("/orders/insert")
+    @PutMapping("/orders")
     public Result insertOrders(@Validated @NotNull(message = "空对象") Orders orders){
         return ordersService.insertOrders(orders);
     }
@@ -45,11 +45,18 @@ public class OrdersController {
     public Result pageList(@Validated PageDto pageDto) {
         return Result.success(ordersService.getOrderPage(pageDto.getCurrentpage(),pageDto.getSize()));
     }
-    @ApiOperation("查询历史订单")
+    @ApiOperation("查询所有历史订单")
     @GetMapping("/orders/history")
-    public Result historyPageList(@Validated PageDto pageDto) {
+    public Result allHistory(@Validated PageDto pageDto) {
         if (pageDto == null) return Result.fail("空参数");
-        IPage iPage = ordersService.getHistoryListPage(pageDto.getCurrentpage(),pageDto.getSize());
+        IPage iPage = ordersService.getHistoryListPage(pageDto.getCurrentpage(),pageDto.getSize(),null);
+        return Result.success(iPage);
+    }
+    @ApiOperation("查询所用户历史订单")
+    @GetMapping("/orders/history/{uid}")
+    public Result userHistory(@PathVariable @NotNull @Pattern(regexp = "[1-9][0-9]*") @Validated PageDto pageDto) {
+        if (pageDto == null) return Result.fail("空参数");
+        IPage iPage = ordersService.getHistoryListPage(pageDto.getCurrentpage(),pageDto.getSize(),null);
         return Result.success(iPage);
     }
     @ApiOperation("获取未接受的订单")
@@ -60,8 +67,8 @@ public class OrdersController {
 
     @ApiOperation("接受订单")
     @LoginRequired(required = true)
-    @PostMapping("/orders/accept")
-    public Result accept(@NotNull(message = "oid为空") Long oid,@NotNull(message = "gid为空") Long gid) {
+    @PostMapping("/orders/accept/{oid}")
+    public Result accept(@PathVariable @NotNull(message = "oid为空") Long oid,@NotNull(message = "gid为空") Long gid) {
         int res = ordersService.acceptOrder(oid,gid);
         if (res == 200)
         {
@@ -77,7 +84,7 @@ public class OrdersController {
     @ApiOperation("拒绝订单")
     @LoginRequired(required = true)
     @PostMapping("/orders/reject/{oid}")
-    public Result reject(@PathVariable(name = "oid") @NotNull(message = "oid为空") Long oid) {
+    public Result reject(@PathVariable @NotNull(message = "oid为空") Long oid) {
         if (ordersService.rejectById(oid) == false)
             return Result.fail(400,"订单不存在",1);
         else
@@ -86,8 +93,8 @@ public class OrdersController {
 
     @ApiOperation("完成订单")
     @LoginRequired(required = true)
-    @PostMapping("/orders/success")
-    public Result success(@NotNull(message = "oid为空") Long oid,@NotNull(message = "oid为空") Long gid) {
+    @PostMapping("/orders/success/{oid}")
+    public Result success(@PathVariable @NotNull(message = "oid为空") Long oid,@NotNull(message = "oid为空") Long gid) {
         int flag = ordersService.successById(oid,gid);
         if (flag == 1) {
             return Result.fail(406,"商品已售空",1);
