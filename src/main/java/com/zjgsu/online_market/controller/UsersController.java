@@ -2,6 +2,7 @@ package com.zjgsu.online_market.controller;
 
 
 import com.zjgsu.online_market.common.annotations.LoginRequired;
+import com.zjgsu.online_market.common.annotations.RoleRequired;
 import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Users;
@@ -35,6 +36,7 @@ public class UsersController {
         return usersService.checkUser(loginDto);
     }
 
+    @ApiOperation("注册用户")
     @PutMapping("/users")
     public Result addUser(@RequestBody @Validated Users users) {
         Integer res = usersService.insertUser(users);
@@ -45,9 +47,19 @@ public class UsersController {
             return Result.fail("创建失败",res);
         }
     }
+
+    @ApiOperation("查看所有已注册用户")
+    @LoginRequired(required = true)
+    @RoleRequired(required = true)
+    @GetMapping("/users")
+    public Result getAllUsers() {
+        return Result.success(usersService.getAllUsers());
+    }
+
+
     @ApiOperation("修改密码")
     @LoginRequired(required = true)
-    @PostMapping("/users/changepassword")
+    @PostMapping("/users")
     public Result changePassword(@RequestHeader("token") String token, @NotNull(message = "密码不能为空") String password, @NotNull(message = "旧密码不能为空") String oldpassword, @NotNull(message = "uid不能为空") Long uid) {
         return usersService.changePassword(token, password, oldpassword, uid);
     }

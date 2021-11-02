@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +46,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     private HttpSession httpSession;
     @Autowired
     private RoleMapper roleMapper;
+
     public Users getUserByUsername(String username) {
         if (redisTemplate.hasKey(username)) {     //redis中有记录，200s
             return (Users) redisTemplate.opsForValue().get(username);
@@ -65,16 +67,25 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         }
     }
 
-    @Deprecated
+    @Transactional
     public Integer insertUser(Users users) {
         if (usersMapper.getUserByUsername(users.getUsername()) != null) {
             return 2;
         } else {
             String enc = encypterUtil.Encrypt(users.getPassword());
             users.setPassword(enc);
-            usersMapper.insert(users);
-            return 1;
+            try {     //防止过程中用户名被注册
+                usersMapper.insert(users);
+                return 1;
+            } catch (Exception e) {
+                return 3;
+            }
         }
+    }
+
+    public List<Users> getAllUsers()
+    {
+        return usersMapper.getAllUsers();
     }
 
 
@@ -85,10 +96,9 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         if (users == null) {
             return Result.fail(401, "用户不存在", 1);
         }
-        Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("uid",users.getUid()));
-        if (role == null)
-        {
-            return Result.fail("用户权限出错，请联系管理员",3);
+        Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("uid", users.getUid()));
+        if (role == null) {
+            return Result.fail("用户权限出错，请联系管理员", 3);
         }
         if (encypterUtil.Decrypt(users.getPassword()).equals(loginDto.getPwd())) {
 
@@ -96,8 +106,8 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             map.put("uid", users.getUid().toString());
             map.put("username", users.getUsername());
             String token = jwtUtils.generateToken(map);
-            httpSession.setAttribute("user",users);
-            httpSession.setAttribute("role",role);
+            httpSession.setAttribute("user", users);
+            httpSession.setAttribute("role", role);
             users.setPassword(null).setPhone(null).setAddress(null);
             return Result.success(200, token, users);
         } else {
@@ -106,14 +116,13 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     }
 
     @Transactional
-    public Result changePassword(String token,String password, String oldpassword, Long uid) {
+    public Result changePassword(String token, String password, String oldpassword, Long uid) {
         DecodedJWT tokenBody = jwtUtils.verify(token);
         //保证是本用户在网页上操作，除非既泄露了密码又泄露了token
-        String tokenUserid =  tokenBody.getClaim("uid").asString();
-        if (!tokenUserid.equals(String.valueOf(uid)))
-        {
+        String tokenUserid = tokenBody.getClaim("uid").asString();
+        if (!tokenUserid.equals(String.valueOf(uid))) {
             //forbidden
-            return Result.fail(403,"用户不一致",null);
+            return Result.fail(403, "用户不一致", null);
         }
         Users users = getUserByUid(uid.toString());
         if (users == null) {
@@ -125,7 +134,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
 
         if (truePwd.equals(oldpassword)) {
 
-            UpdateWrapper<Users> updateWrapper = new UpdateWrapper<Users>().eq("uid",users.getUid());
+            UpdateWrapper<Users> updateWrapper = new UpdateWrapper<Users>().eq("uid", users.getUid());
             users.setPassword(encypterUtil.Encrypt(password));
 
             usersMapper.update(users, updateWrapper);

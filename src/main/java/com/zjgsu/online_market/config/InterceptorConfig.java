@@ -1,6 +1,8 @@
 package com.zjgsu.online_market.config;
 
+import com.zjgsu.online_market.entity.Role;
 import com.zjgsu.online_market.interceptor.JWTInterceptor;
+import com.zjgsu.online_market.interceptor.RoleInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.management.relation.RoleInfo;
 import java.io.File;
 
 @Slf4j
@@ -21,19 +24,15 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private String LocalImgPath;
     @Autowired
     private JWTInterceptor jwtInterceptor;
+    @Autowired
+    private RoleInterceptor roleInterceptor;
 
 
 //    jwt拦截
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(jwtInterceptor);
-//                    .addPathPatterns("/**");
-//                .addPathPatterns("/**")
-//                .excludePathPatterns("/users/checkuser")
-//                .excludePathPatterns("/static/**")
-//                .excludePathPatterns("/home")
-//                .excludePathPatterns("/good/**")
-//                .excludePathPatterns("/orders/insert");
+        registry.addInterceptor(jwtInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(roleInterceptor).addPathPatterns("/**");
     }
 
 

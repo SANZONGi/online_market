@@ -54,51 +54,17 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         return Result.success(null);
     }
 
-    /**
-     * 通过id设置订单成功
-     **/
-    @Transactional
-    public Integer acceptOrder(Long oid, Long gid) {
-        /*获取order的时候加行锁，防止下面更新之前被并发线程更改*/
-        Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
-        if (goodMapper.selectById(gid).getStock() == 0) {
-            return 1;
-        }
-        if (orders == null || orders.getStatus().equals(ORDER_EXCHANGING)) {
-            return 2;
-        }
-        if (setOrderStatusById(oid, ORDER_EXCHANGING) == 0)
-            return 3;
-        return 200;
-    }
-
-    public IPage getHistoryListPage(Long currentpage, Integer size, Integer uid) {
+    public IPage getHistoryListPage(Long currentpage, Integer size, Long uid) {
         Page page = new Page(currentpage, size);
         IPage iPage;
         if (uid == null) {
             iPage = ordersMapper.selectPage(page, new QueryWrapper<Orders>().orderByDesc("oid")
                     .eq("status", ORDER_SUCCESS).or().eq("status", ORDER_FAIL));
         } else {
-            iPage = ordersMapper.selectPage(page, new QueryWrapper<Orders>().orderByDesc("oid").eq("uid",uid).and(
+            iPage = ordersMapper.selectPage(page, new QueryWrapper<Orders>().orderByDesc("oid").eq("uid", uid).and(
                     wrapper -> wrapper.eq("status", ORDER_SUCCESS).or().eq("status", ORDER_FAIL)));
         }
-
-
         return iPage;
-    }
-
-    /**
-     * 通过id设置订单失败
-     **/
-    @Transactional
-    public Boolean rejectById(Long oid) {
-        Orders orders = ordersMapper.selectOne(new QueryWrapper<Orders>().eq("oid", oid));
-        if (orders == null) {
-            return false;
-        }
-        if (setOrderStatusById(oid, ORDER_FAIL) == 0)
-            return false;
-        return true;
     }
 
     public IPage getOrderPage(Long currentpage, Integer size) {
@@ -109,18 +75,46 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     }
 
     @Transactional
+    public Integer acceptOrder(Long oid, Long gid) {
+        /*获取order的时候加行锁，防止下面更新之前被并发线程更改*/
+        Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
+        Good good = goodMapper.selectById(gid);
+        if (good == null || good.getStock() <= 0) {
+            return 1;
+        }
+        if (orders == null || orders.getStatus().equals(ORDER_EXCHANGING)) {
+            return 2;
+        }
+        if (setOrderStatusById(oid, ORDER_EXCHANGING) == 0) {
+            return 3;
+        }
+        //匹配0条更新失败
+        if (goodMapper.decreaseById(gid) == 0) {
+            return 4;
+        }
+        return 0;
+    }
+
+    @Transactional
+    public Integer rejectById(Long oid, Long gid) {
+        if (goodMapper.increaseById(gid) == 0) {
+            return 1;
+        }
+        if (setOrderStatusById(oid, ORDER_FAIL) == 0) {
+            return 2;
+        }
+        return 0;
+    }
+
+    @Transactional
     public Integer successById(Long oid, Long gid) {
         Good good = goodMapper.selectByGidForUpdate(gid);
-        if (good == null) return 3;
-        if (good.getStock() <= 0)
-            return 1;
-        if (good.getStatus() == 2)
+        //商品有问题
+        if (good == null || good.getStock() <= 0 || good.getStatus() == 2) return 1;
+        if (goodMapper.updateStatus(ORDER_SUCCESS, gid) == 0 || setOrderStatusById(oid, ORDER_SUCCESS) == 0) {
             return 2;
-        UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid", gid).eq("stock", good.getStock())
-                .set("status", ORDER_SUCCESS).set("stock", good.getStock() - 1);
-        goodMapper.update(null, updateWrapper);
+        }
         redisTemplate.delete(String.valueOf(gid));
-        setOrderStatusById(oid, ORDER_SUCCESS);
-        return 3;
+        return 0;
     }
 }

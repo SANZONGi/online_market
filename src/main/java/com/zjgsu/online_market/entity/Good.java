@@ -2,6 +2,7 @@ package com.zjgsu.online_market.entity;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -54,11 +55,11 @@ public class Good implements Serializable {
 
     @NotNull(message = "一级目录不能为空")
     @Min(value = 1)
-    private Integer priCatalogue;
+    private Integer priCata;
 
     @NotNull(message = "二级目录不能为空")
     @Min(value = 1)
-    private Integer secCatalogue;
+    private Integer secCata;
 
 
 }

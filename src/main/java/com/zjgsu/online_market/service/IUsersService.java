@@ -7,6 +7,8 @@ import com.zjgsu.online_market.entity.Users;
 import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -23,6 +25,8 @@ public interface IUsersService extends IService<Users> {
     Integer insertUser(Users users);
 
     Object checkUser(LoginDto loginDto);
+
+    List<Users> getAllUsers();
 
     Result changePassword(String token,String password, String oldpassword, Long uid);
 }

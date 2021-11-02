@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -107,6 +108,18 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
         }
 
         return 0;
+    }
+
+    public List<Good> getGoodByPri(@NotNull Integer pri)
+    {
+        QueryWrapper<Good> queryWrapper = new QueryWrapper<Good>().eq("pri_cata",pri);
+        return goodMapper.selectList(queryWrapper);
+    }
+
+    public List<Good> getGoodBySec(@NotNull Integer pri,@NotNull Integer sec)
+    {
+        QueryWrapper<Good> queryWrapper = new QueryWrapper<Good>().eq("pri_cata",pri).eq("sec_cata",sec);
+        return goodMapper.selectList(queryWrapper);
     }
 
 

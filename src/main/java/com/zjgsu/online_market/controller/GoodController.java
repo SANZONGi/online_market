@@ -9,6 +9,7 @@ import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.service.IGoodService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -35,8 +36,8 @@ public class GoodController {
     @Autowired
     private IGoodService goodService;
 
-    @ApiOperation("商品列表")
-    @GetMapping("/home")
+    @ApiOperation("全部未下架商品")
+    @GetMapping("/good")
     public Result list() {
         return Result.success( goodService.list(new QueryWrapper<Good>().ne("status", 2)));
     }
@@ -61,11 +62,26 @@ public class GoodController {
         return Result.success(good);
     }
 
-    @ApiOperation("根据搜索获取商品")
+    @ApiOperation("根据搜索获取商品(搜索栏)")
     @GetMapping("/good/search/{val}")
     public Result getGoodBySearch(@PathVariable @NotNull(message = "空参数") String val)
     {
         return Result.success("");
+    }
+
+
+    @ApiOperation("根据一级类别搜索")
+    @GetMapping("/good/catalogue/{pri}")
+    public Result getGoodByPri(@PathVariable @NotNull(message = "空参数") Integer pri)
+    {
+        return Result.success(goodService.getGoodByPri(pri));
+    }
+
+    @ApiOperation("根据二级类别搜索")
+    @GetMapping("/good/catalogue/{pri}/{sec}")
+    public Result getGoodBySec(@PathVariable @NotNull Integer pri,@PathVariable @NotNull Integer sec)
+    {
+        return Result.success(goodService.getGoodBySec(pri,sec));
     }
 
     @ApiOperation("是否存在未下架商品")

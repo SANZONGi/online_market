@@ -18,13 +18,13 @@ public interface IOrdersService extends IService<Orders> {
 
     Result insertOrders(Orders orders);
 
-    IPage getHistoryListPage(Long currentpage, Integer size,Integer uid);
+    IPage getHistoryListPage(Long currentpage, Integer size,Long uid);
 
     IPage getOrderPage(Long currentpage, Integer size);
 
     Integer successById(Long oid, Long gid);
 
-    Boolean rejectById(Long oid);
+    Integer rejectById(Long oid, Long gid);
 
     Integer acceptOrder(Long oid,Long gid);
 }

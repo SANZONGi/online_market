@@ -5,6 +5,7 @@ import com.zjgsu.online_market.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -20,4 +21,6 @@ import org.springframework.stereotype.Repository;
 public interface OrdersMapper extends BaseMapper<Orders> {
     @Select("select * from orders where oid = #{oid} for update")
     Orders getOrderByOidForUpdate(@Param("oid") Long oid);
+
+
 }
