@@ -5,10 +5,12 @@ import com.zjgsu.online_market.entity.Img;
 import com.zjgsu.online_market.mapper.ImgMapper;
 import com.zjgsu.online_market.service.IImgService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Service
 public class ImgServiceImpl extends ServiceImpl<ImgMapper,Img> implements IImgService {
     @Autowired
     private ImgMapper imgMapper;
