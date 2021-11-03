@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Users;
-import io.swagger.models.auth.In;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,7 +16,7 @@ import java.util.List;
  * @since 2021-09-09
  */
 public interface IUsersService extends IService<Users> {
-    Users getUserByUsername(@Param("username") String username);
+    Users getUserByUsername(String username);
 
     Users getUserByUid(String uid);
 

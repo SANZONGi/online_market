@@ -1,9 +1,7 @@
 package com.zjgsu.online_market.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.zjgsu.online_market.entity.Img;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
