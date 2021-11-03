@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -29,6 +30,9 @@ public class UsersController {
 
     @Autowired
     private IUsersService usersService;
+
+    @Autowired
+    private HttpSession httpSession;
 
     @ApiOperation("检查用户")
     @PostMapping("/users/check")
@@ -54,6 +58,17 @@ public class UsersController {
     @GetMapping("/users")
     public Result getAllUsers() {
         return Result.success(usersService.getAllUsers());
+    }
+
+
+    @ApiOperation("退出登录")
+    @LoginRequired(required = true)
+    @PostMapping("/users/logout")
+    public Result logout()
+    {
+        httpSession.removeAttribute("role");
+        httpSession.removeAttribute("user");
+        return Result.success(0);
     }
 
 
