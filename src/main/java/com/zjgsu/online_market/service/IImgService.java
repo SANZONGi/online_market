@@ -2,12 +2,12 @@ package com.zjgsu.online_market.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zjgsu.online_market.entity.Img;
-import com.zjgsu.online_market.mapper.ImgMapper;
+import org.springframework.stereotype.Service;
 
-import javax.jnlp.BasicService;
 import java.util.List;
 
+@Service
 public interface IImgService extends IService<Img> {
-    public List<String> getUrlByGid(Long gid);
+    List<String> getUrlByGid(Long gid);
 
 }
