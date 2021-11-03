@@ -11,6 +11,6 @@ import java.util.List;
 @Mapper
 @Repository
 public interface ImgMapper extends BaseMapper<Img> {
-    @Select("select img_url from img where git = #{gid}")
+    @Select("select img_url from img where gid = #{gid}")
     List<String> getUrlByGid(Long gid);
 }
