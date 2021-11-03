@@ -3,7 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+application-prod.yml
 
 
 ### STS ###
@@ -20,7 +20,7 @@ target/
 *.iws
 *.iml
 *.ipr
-*.yml
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
