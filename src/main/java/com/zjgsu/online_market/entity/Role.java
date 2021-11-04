@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotNull;
 
 @Data
-@TableName(value = "img")
+@TableName(value = "role")
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class Role {
