@@ -1,6 +1,5 @@
 package com.zjgsu.online_market.config;
 
-import com.zjgsu.online_market.entity.Role;
 import com.zjgsu.online_market.interceptor.JWTInterceptor;
 import com.zjgsu.online_market.interceptor.RoleInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +11,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.management.relation.RoleInfo;
 import java.io.File;
 
 @Slf4j
