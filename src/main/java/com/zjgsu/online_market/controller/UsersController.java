@@ -40,15 +40,25 @@ public class UsersController {
         return usersService.checkUser(loginDto);
     }
 
+    @ApiOperation("修改用户信息")
+    @LoginRequired(required = true)
+    @PostMapping("users/{id}")
+    public Result updateUser(@PathVariable @NotNull Long id,@RequestBody @NotNull Users users) {
+        int res = usersService.updateUser(id,users);
+        if (res == 0)
+            return Result.fail("用户不存在");
+        else
+            return Result.success("ok");
+    }
+
     @ApiOperation("注册用户")
     @PutMapping("/users")
     public Result addUser(@RequestBody @Validated Users users) {
         Integer res = usersService.insertUser(users);
-        if (res == 1)
-        {
+        if (res == 1) {
             return Result.success("成功");
         } else {
-            return Result.fail("创建失败",res);
+            return Result.fail("创建失败", res);
         }
     }
 
@@ -64,8 +74,7 @@ public class UsersController {
     @ApiOperation("退出登录")
     @LoginRequired(required = true)
     @PostMapping("/users/logout")
-    public Result logout()
-    {
+    public Result logout() {
         httpSession.removeAttribute("role");
         httpSession.removeAttribute("user");
         return Result.success(0);

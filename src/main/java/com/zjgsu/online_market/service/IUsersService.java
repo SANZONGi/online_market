@@ -27,4 +27,6 @@ public interface IUsersService extends IService<Users> {
     List<Users> getAllUsers();
 
     Result changePassword(String token,String password, String oldpassword, Long uid);
+
+    Integer updateUser(Long uid,Users users);
 }

@@ -13,6 +13,7 @@ import com.zjgsu.online_market.entity.Users;
 import com.zjgsu.online_market.mapper.RoleMapper;
 import com.zjgsu.online_market.mapper.UsersMapper;
 import com.zjgsu.online_market.service.IUsersService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @author xjj
  * @since 2021-09-09
  */
+@Slf4j
 @Service
 public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements IUsersService {
     @Autowired
@@ -88,6 +90,12 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         return usersMapper.getAllUsers();
     }
 
+    public Integer updateUser(Long uid,Users users) {
+        users.setPassword(null);
+        users.setUsername(null);
+        users.setUid(null);
+        return usersMapper.update(users,new UpdateWrapper<Users>().eq("uid",uid));
+    }
 
     @Transactional(readOnly = true)
     public Object checkUser(LoginDto loginDto) {
