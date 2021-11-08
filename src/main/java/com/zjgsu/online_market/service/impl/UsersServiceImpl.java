@@ -75,7 +75,8 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             String enc = encypterUtil.Encrypt(users.getPassword());
             users.setPassword(enc);
             try {     //防止过程中用户名被注册
-                usersMapper.insert(users);
+                usersMapper.insertHasKey(users);
+                roleMapper.insert(new Role().setRole(0).setUid(users.getUid()));
                 return 1;
             } catch (Exception e) {
                 return 3;

@@ -2,9 +2,7 @@ package com.zjgsu.online_market.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zjgsu.online_market.entity.Users;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,4 +23,8 @@ public interface UsersMapper extends BaseMapper<Users>{
 
     @Select("select * from users")
     List<Users> getAllUsers();
+
+    @Options(useGeneratedKeys = true, keyProperty = "uid", keyColumn = "uid")
+    @Insert("insert  into users (uid,username,password,phone,address) values (#{uid},#{username},#{password},#{phone},#{address})")
+    void insertHasKey(Users users);
 }
