@@ -5,6 +5,7 @@ import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Users;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public interface IUsersService extends IService<Users> {
 
     Integer insertUser(Users users);
 
-    Object checkUser(LoginDto loginDto);
+    Object checkUser(HttpServletRequest request, LoginDto loginDto);
 
     List<Users> getAllUsers();
 

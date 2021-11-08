@@ -19,7 +19,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,8 +44,6 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     private JwtUtils jwtUtils;
     @Autowired
     private EncypterUtil encypterUtil;
-    @Autowired
-    private HttpSession httpSession;
     @Autowired
     private RoleMapper roleMapper;
 
@@ -98,7 +96,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     }
 
     @Transactional(readOnly = true)
-    public Object checkUser(LoginDto loginDto) {
+    public Object checkUser(HttpServletRequest request, LoginDto loginDto) {
         Users users = getUserByUsername(loginDto.getUsername());
 
         if (users == null) {
@@ -109,13 +107,12 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             return Result.fail("用户权限出错，请联系管理员", 3);
         }
         if (encypterUtil.Decrypt(users.getPassword()).equals(loginDto.getPwd())) {
-
             Map<String, String> map = new HashMap<>();
             map.put("uid", users.getUid().toString());
             map.put("username", users.getUsername());
             String token = jwtUtils.generateToken(map);
-            httpSession.setAttribute("user", users);
-            httpSession.setAttribute("role", role);
+            request.getSession().setAttribute("user", users);
+            request.getSession().setAttribute("role", role);
             users.setPassword(null).setPhone(null).setAddress(null);
             return Result.success(200, token, users);
         } else {

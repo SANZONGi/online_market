@@ -1,6 +1,5 @@
 package com.zjgsu.online_market.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,13 +12,17 @@ public class CorsConfig {
     private CorsConfiguration buildConfig() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // 1 设置访问源地址
-        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedOriginPattern("*");
         // 2 设置访问源请求头
         corsConfiguration.addAllowedHeader("*");
         // 3 设置访问源请求方法
         corsConfiguration.addAllowedMethod("*");
+
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setMaxAge(3600L);
         // 4 暴露哪些头部信息
         corsConfiguration.addExposedHeader("*");
+
         return corsConfiguration;
     }
     /**
