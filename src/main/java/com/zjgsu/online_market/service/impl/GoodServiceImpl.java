@@ -3,7 +3,6 @@ package com.zjgsu.online_market.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zjgsu.online_market.common.lang.BASE64DecodedMultipartFile;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Img;
@@ -97,7 +96,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
                 return 2;
             }
         }
-        goodMapper.insertSelectiveHasKey(good);
+        goodMapper.insertHasKey(good);
         System.out.println(good);
         for (MultipartFile file : files) {
             String origin = file.getOriginalFilename();
