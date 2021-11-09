@@ -5,6 +5,7 @@ import com.zjgsu.online_market.entity.Good;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
@@ -32,4 +33,6 @@ public interface IGoodService extends IService<Good> {
     List<Good> getGoodByPri(@NotNull Integer pri);
 
     List<Good> getGoodBySec(@NotNull Integer pri,@NotNull Integer sec);
+
+    List<Good> getGoodBySearch(@NotNull @NotBlank String val);
 }

@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
@@ -61,11 +62,12 @@ public class GoodController {
         return Result.success(good);
     }
 
-    @ApiOperation("根据搜索获取商品(搜索栏),开发中")
-    @GetMapping("/good/search/{val}")
-    public Result getGoodBySearch(@PathVariable @NotNull(message = "空参数") String val)
+    @ApiOperation("根据搜索获取商品(搜索栏)")
+    @GetMapping("/good/search")
+    public Result getGoodBySearch(@NotNull(message = "空参数") @NotBlank(message = "空参数") String val)
     {
-        return Result.success("");
+        List<Good> goods = goodService.getGoodBySearch(val);
+        return Result.success(goods);
     }
 
 
