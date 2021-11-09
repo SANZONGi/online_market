@@ -39,8 +39,16 @@ public class UsersController {
 
     @ApiOperation("修改用户信息")
     @LoginRequired(required = true)
-    @PostMapping("users/{id}")
+    @PostMapping("/users/{id}")
     public Result updateUser(@PathVariable @NotNull Long id,@RequestBody @NotNull Users users) {
+        if (users.getPhone() == null || !users.getPhone().matches("[0-9]{11}"))
+        {
+            return Result.fail("电话格式错误或空",1);
+        }
+        if (users.getAddress() == null || users.getAddress().equals(""))
+        {
+            return Result.fail("地址格式错误或空",2);
+        }
         int res = usersService.updateUser(id,users);
         if (res == 0)
             return Result.fail("用户不存在");

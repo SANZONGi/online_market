@@ -76,7 +76,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             users.setPassword(enc);
             try {     //防止过程中用户名被注册
                 usersMapper.insertHasKey(users);
-                roleMapper.insert(new Role().setRole(0).setUid(users.getUid()));
+                roleMapper.insert(new Role().setRole(RoleServiceImpl.USER_ROLE).setUid(users.getUid()));
                 return 1;
             } catch (Exception e) {
                 return 3;

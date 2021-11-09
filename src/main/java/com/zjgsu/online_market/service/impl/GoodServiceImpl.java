@@ -96,6 +96,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
                 return 2;
             }
         }
+        good.setStatus(0);
         goodMapper.insertHasKey(good);
         System.out.println(good);
         for (MultipartFile file : files) {

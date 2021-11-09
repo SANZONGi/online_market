@@ -9,7 +9,6 @@ import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.service.IGoodService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -62,7 +61,7 @@ public class GoodController {
         return Result.success(good);
     }
 
-    @ApiOperation("根据搜索获取商品(搜索栏)")
+    @ApiOperation("根据搜索获取商品(搜索栏),开发中")
     @GetMapping("/good/search/{val}")
     public Result getGoodBySearch(@PathVariable @NotNull(message = "空参数") String val)
     {

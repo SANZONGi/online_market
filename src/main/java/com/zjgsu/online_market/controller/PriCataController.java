@@ -12,8 +12,7 @@ public class PriCataController {
     private IPriCataService priCataService;
 
     @GetMapping("/pri")
-    public Result getAll()
-    {
+    public Result getAll() {
         return Result.success(priCataService.getAll());
     }
 }

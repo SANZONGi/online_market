@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.mapper.GoodMapper;
@@ -47,11 +46,16 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         return ordersMapper.update(null, updateWrapper);
     }
 
-    public Result insertOrders(Orders orders) {
+    public Integer insertOrders(Orders orders) {
         LocalDateTime now = LocalDateTime.now();
         orders.setDate(now).setOid(null);
-        ordersMapper.insert(orders);
-        return Result.success(null);
+        try {
+            ordersMapper.insert(orders);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return 1;
+        }
+        return 0;
     }
 
     public IPage getHistoryListPage(Long currentpage, Integer size, Long uid) {

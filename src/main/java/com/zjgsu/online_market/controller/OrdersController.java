@@ -38,8 +38,12 @@ public class OrdersController {
     @LoginRequired(required = true)
     @PutMapping("/orders")
     public Result insertOrders(@Validated @NotNull(message = "空对象") Orders orders){
-
-        return ordersService.insertOrders(orders);
+        int res = ordersService.insertOrders(orders);
+        if (res == 1)
+        {
+            return Result.fail("创建失败",1);
+        }
+        return Result.success("创建成功");
     }
 
     @ApiOperation("查询所有订单")
@@ -53,7 +57,7 @@ public class OrdersController {
         IPage iPage = ordersService.getHistoryListPage(pageDto.getCurrentpage(),pageDto.getSize(),null);
         return Result.success(iPage);
     }
-    @ApiOperation("查询所用户历史订单")
+    @ApiOperation("查询用户历史订单")
     @GetMapping("/orders/history/{uid}")
     public Result getUserHistory(@PathVariable @NotNull @Min(1) Long uid, @Validated @NotNull PageDto pageDto) {
         IPage iPage = ordersService.getHistoryListPage(pageDto.getCurrentpage(),pageDto.getSize(),uid);

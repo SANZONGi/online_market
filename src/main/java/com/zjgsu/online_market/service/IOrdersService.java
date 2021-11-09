@@ -2,7 +2,6 @@ package com.zjgsu.online_market.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Orders;
 
 /**
@@ -16,7 +15,7 @@ import com.zjgsu.online_market.entity.Orders;
 public interface IOrdersService extends IService<Orders> {
     Integer setOrderStatusById(Long oid, Integer status);
 
-    Result insertOrders(Orders orders);
+    Integer insertOrders(Orders orders);
 
     IPage getHistoryListPage(Long currentpage, Integer size,Long uid);
 

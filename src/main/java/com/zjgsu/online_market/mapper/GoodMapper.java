@@ -21,7 +21,7 @@ public interface GoodMapper extends BaseMapper<Good>{
     Good selectByGidForUpdate(Long gid);
 
     @Options(useGeneratedKeys = true, keyProperty = "gid", keyColumn = "gid")
-    @Insert("insert  into good (uid,gname,price,stock,status,description,pri_cata,sec_cata) values (#{uid},#{gname},#{price},#{stock},#{status},#{description},#{priCatalogue},#{secCatalogue})")
+    @Insert("insert  into good (uid,gname,price,stock,status,description,pri_cata,sec_cata) values (#{uid},#{gname},#{price},#{stock},#{status},#{description},#{priCata},#{secCata})")
     void insertHasKey(Good good);
 
     @Update("update good set status = #{status} where gid = #{gid}")

@@ -8,5 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
+    public final static Integer ADMIN_ROLE = 0;
+    public final static Integer USER_ROLE = 1;
 
 }
