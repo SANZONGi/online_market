@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ISecCataService extends IService<SecCata> {
     List<SecCata> getAll();
+
+    List<SecCata> getAllInPri(Integer pri);
 }
