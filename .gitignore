@@ -1,6 +1,10 @@
 HELP.md
 target/
+<<<<<<< HEAD
 !.mvn/wrapper/maven-wrapper.jar
+=======
+!online_market/.mvn/wrapper/maven-wrapper.jar
+>>>>>>> 608285f (add vue)
 !**/src/main/**/target/
 !**/src/test/**/target/
 application-prod.yml
@@ -33,3 +37,32 @@ build/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
+=======
+
+####Vue###
+.DS_Store
+node_modules
+/dist
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+##maven###
+mvnw*
+.mvn
+>>>>>>> 608285f (add vue)
