@@ -11,4 +11,7 @@ import java.util.List;
 public interface SecCataMapper extends BaseMapper<SecCata> {
     @Select("select * from sec_cata")
     List<SecCata> getAll();
+
+    @Select("select * from sec_cata where pri_id = #{pri}")
+    List<SecCata> getAllInPri(Integer pri);
 }
