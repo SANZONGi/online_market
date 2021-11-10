@@ -1,15 +1,9 @@
 HELP.md
 target/
-<<<<<<< HEAD
-!.mvn/wrapper/maven-wrapper.jar
-=======
 !online_market/.mvn/wrapper/maven-wrapper.jar
->>>>>>> 608285f (add vue)
 !**/src/main/**/target/
 !**/src/test/**/target/
-application-prod.yml
-
-
+*.yml
 ### STS ###
 .apt_generated
 .classpath
@@ -37,8 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-<<<<<<< HEAD
-=======
 
 ####Vue###
 .DS_Store
@@ -65,4 +57,3 @@ yarn-error.log*
 ##maven###
 mvnw*
 .mvn
-
