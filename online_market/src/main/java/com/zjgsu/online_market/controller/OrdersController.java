@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
  * 货物：0
  **/
 @RestController
+@RequestMapping("/v2.0")
 public class OrdersController {
     @Autowired
     private IOrdersService ordersService;

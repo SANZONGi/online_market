@@ -31,6 +31,7 @@ import java.util.List;
 
 @Validated
 @RestController
+@RequestMapping("/v2.0")
 public class GoodController {
 
     @Autowired

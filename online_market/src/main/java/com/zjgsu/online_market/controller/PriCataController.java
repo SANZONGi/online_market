@@ -4,9 +4,11 @@ import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.service.IPriCataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/v2.0")
 public class PriCataController {
     @Autowired
     private IPriCataService priCataService;

@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
  */
 @Slf4j
 @RestController
+@RequestMapping("/v2.0")
 public class UsersController {
 
     @Autowired
