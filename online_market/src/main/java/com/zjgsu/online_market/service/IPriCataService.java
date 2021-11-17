@@ -8,4 +8,8 @@ import java.util.List;
 public interface IPriCataService extends IService<PriCata> {
     List<PriCata> getAll();
 
+    Integer insertHasKey(PriCata pri);
+
+    Integer insertPriAndSec(String priName,String SecName);
+
 }

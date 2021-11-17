@@ -3,6 +3,7 @@ package com.zjgsu.online_market.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zjgsu.online_market.common.dto.GoodDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Img;
@@ -128,6 +129,11 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
         QueryWrapper<Good> queryWrapper = new QueryWrapper<>();
         List<Good> goods = goodMapper.selectList(queryWrapper.like("gname",val).or().like("description",val));
         return goods;
+    }
+
+    @Override
+    public GoodDto getGoodDto(Long gid) {
+        return goodMapper.getGoodDto(gid);
     }
 
 

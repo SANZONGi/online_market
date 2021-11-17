@@ -1,5 +1,6 @@
 package com.zjgsu.online_market.service;
 
+import com.zjgsu.online_market.common.dto.GoodDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -35,4 +36,6 @@ public interface IGoodService extends IService<Good> {
     List<Good> getGoodBySec(@NotNull Integer pri,@NotNull Integer sec);
 
     List<Good> getGoodBySearch(@NotNull @NotBlank String val);
+
+    GoodDto getGoodDto(Long gid);
 }
