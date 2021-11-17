@@ -132,8 +132,8 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     }
 
     @Override
-    public GoodDto getGoodDto(Long gid) {
-        return goodMapper.getGoodDto(gid);
+    public List<GoodDto> getGoodDtoList() {
+        return goodMapper.getGoodDtoList();
     }
 
 
