@@ -9,6 +9,7 @@ import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.service.IGoodService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.security.PublicKey;
 import java.util.List;
 
 /**
@@ -118,6 +120,13 @@ public class GoodController {
         Page page = new Page(pageDto.getCurrentpage(), pageDto.getSize());
         IPage iPage = goodService.page(page, new QueryWrapper<Good>().orderByDesc("gid").eq("status", 2));
         return Result.success(200, "查询成功", iPage);
+    }
+
+    @ApiOperation("获取一个带图片的商品类")
+    @GetMapping("/good/dto/{gid}")
+    public Result getGoodDto(@PathVariable @NotNull Long gid)
+    {
+        return Result.success(goodService.getGoodDto(gid));
     }
 
 }

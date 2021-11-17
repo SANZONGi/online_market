@@ -1,6 +1,7 @@
 package com.zjgsu.online_market.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zjgsu.online_market.common.dto.GoodDto;
 import com.zjgsu.online_market.entity.Good;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -32,4 +33,7 @@ public interface GoodMapper extends BaseMapper<Good>{
 
     @Update("update good set stock = stock + 1 where gid = #{gid}")
     Integer increaseById(@Param("gid") Long gid);
+
+    @Select("select good.gid,good.uid,good.gname,good.price,good.pri_cata,good.sec_cata,good.`status`,good.stock,good.description,img_url from good LEFT JOIN img on good.gid = img.gid where good.gid = #{gid} limit 1")
+    GoodDto getGoodDto(Long gid);
 }
