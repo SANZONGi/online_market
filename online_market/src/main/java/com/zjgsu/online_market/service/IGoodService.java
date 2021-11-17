@@ -37,5 +37,5 @@ public interface IGoodService extends IService<Good> {
 
     List<Good> getGoodBySearch(@NotNull @NotBlank String val);
 
-    GoodDto getGoodDto(Long gid);
+    List<GoodDto> getGoodDtoList();
 }

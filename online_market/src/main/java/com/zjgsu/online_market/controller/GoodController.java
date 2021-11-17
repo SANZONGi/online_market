@@ -123,10 +123,10 @@ public class GoodController {
     }
 
     @ApiOperation("获取一个带图片的商品类")
-    @GetMapping("/good/dto/{gid}")
-    public Result getGoodDto(@PathVariable @NotNull Long gid)
+    @GetMapping("/good/dto")
+    public Result getGoodDtoList()
     {
-        return Result.success(goodService.getGoodDto(gid));
+        return Result.success(goodService.getGoodDtoList());
     }
 
 }
