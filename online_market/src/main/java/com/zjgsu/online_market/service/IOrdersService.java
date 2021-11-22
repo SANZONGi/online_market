@@ -2,7 +2,11 @@ package com.zjgsu.online_market.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.entity.Orders;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * <p>
@@ -17,7 +21,7 @@ public interface IOrdersService extends IService<Orders> {
 
     Integer insertOrders(Orders orders);
 
-    IPage getHistoryListPage(Long currentpage, Integer size,Long uid);
+    List<HashMap<String, String>> getHistoryOrdersAndUsersPage(Long current,Integer size, Long uid);
 
     IPage getOrderPage(Long currentpage, Integer size);
 
@@ -26,4 +30,7 @@ public interface IOrdersService extends IService<Orders> {
     Integer rejectById(Long oid, Long gid);
 
     Integer acceptOrder(Long oid,Long gid);
+
+    List<HashMap<String, String>> getOrdersAndUsersWithStatus(Integer status);
+
 }

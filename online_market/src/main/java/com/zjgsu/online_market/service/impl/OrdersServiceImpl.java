@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.mapper.GoodMapper;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * <p>
@@ -27,10 +30,10 @@ import java.time.LocalDateTime;
  */
 @Service
 public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements IOrdersService {
-    private final static Integer ORDER_WAITING = 0;
-    private final static Integer ORDER_EXCHANGING = 1;
-    private final static Integer ORDER_SUCCESS = 2;
-    private final static Integer ORDER_FAIL = 3;
+    public final static Integer ORDER_WAITING = 0;
+    public final static Integer ORDER_EXCHANGING = 1;
+    public final static Integer ORDER_SUCCESS = 2;
+    public final static Integer ORDER_FAIL = 3;
 
     @Autowired
     private GoodMapper goodMapper;
@@ -46,6 +49,10 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         return ordersMapper.update(null, updateWrapper);
     }
 
+    public List<HashMap<String, String>> getOrdersAndUsersWithStatus(Integer status) {
+        return ordersMapper.getOrdersAndUsersWithStatus(status);
+    }
+
     public Integer insertOrders(Orders orders) {
         LocalDateTime now = LocalDateTime.now();
         orders.setDate(now).setOid(null);
@@ -58,17 +65,14 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         return 0;
     }
 
-    public IPage getHistoryListPage(Long currentpage, Integer size, Long uid) {
-        Page page = new Page(currentpage, size);
-        IPage iPage;
-        if (uid == null) {
-            iPage = ordersMapper.selectPage(page, new QueryWrapper<Orders>().orderByDesc("oid")
-                    .eq("status", ORDER_SUCCESS).or().eq("status", ORDER_FAIL));
-        } else {
-            iPage = ordersMapper.selectPage(page, new QueryWrapper<Orders>().orderByDesc("oid").eq("uid", uid).and(
-                    wrapper -> wrapper.eq("status", ORDER_SUCCESS).or().eq("status", ORDER_FAIL)));
+    public List<HashMap<String, String>> getHistoryOrdersAndUsersPage(Long current, Integer size, Long uid) {
+        if (current - 1 < 0 || size < 0) {
+            throw new RuntimeException("分页参数错误");
         }
-        return iPage;
+        current = (current - 1) * size;
+        List<HashMap<String, String>> list = ordersMapper.getHistoryOrdersAndUsersPageWithStatus(current, size, uid, ORDER_SUCCESS);
+        list.addAll(ordersMapper.getHistoryOrdersAndUsersPageWithStatus(current, size, uid, ORDER_FAIL));
+        return list;
     }
 
     public IPage getOrderPage(Long currentpage, Integer size) {
