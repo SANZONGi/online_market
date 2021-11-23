@@ -11,12 +11,14 @@ import com.zjgsu.online_market.entity.Orders;
 import com.zjgsu.online_market.mapper.GoodMapper;
 import com.zjgsu.online_market.mapper.OrdersMapper;
 import com.zjgsu.online_market.service.IOrdersService;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,14 +67,13 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         return 0;
     }
 
-    public List<HashMap<String, String>> getHistoryOrdersAndUsersPage(Long current, Integer size, Long uid) {
+    public List<HashMap<String, String>> getOrdersAndUsersPageWithStatus(Long current, Integer size, Long uid,List<Integer> status) {
         if (current - 1 < 0 || size < 0) {
             throw new RuntimeException("分页参数错误");
         }
         current = (current - 1) * size;
-        List<HashMap<String, String>> list = ordersMapper.getHistoryOrdersAndUsersPageWithStatus(current, size, uid, ORDER_SUCCESS);
-        list.addAll(ordersMapper.getHistoryOrdersAndUsersPageWithStatus(current, size, uid, ORDER_FAIL));
-        return list;
+        List<HashMap<String, String>> res = ordersMapper.getOrdersAndUsersPageWithStatus(current, size, uid, status);
+        return res;
     }
 
     public IPage getOrderPage(Long currentpage, Integer size) {

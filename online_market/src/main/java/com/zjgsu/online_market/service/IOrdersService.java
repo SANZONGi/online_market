@@ -21,7 +21,7 @@ public interface IOrdersService extends IService<Orders> {
 
     Integer insertOrders(Orders orders);
 
-    List<HashMap<String, String>> getHistoryOrdersAndUsersPage(Long current,Integer size, Long uid);
+    List<HashMap<String, String>> getOrdersAndUsersPageWithStatus(Long current,Integer size, Long uid,List<Integer> status);
 
     IPage getOrderPage(Long currentpage, Integer size);
 
