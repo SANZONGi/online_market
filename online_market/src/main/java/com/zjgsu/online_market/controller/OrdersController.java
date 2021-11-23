@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,19 +50,25 @@ public class OrdersController {
         return Result.success("创建成功");
     }
 
-    @ApiOperation("查询所有订单")
-    @Deprecated
-    @GetMapping("/orders")
-    public Result pageList(@Validated PageDto pageDto) {
-        return Result.success(ordersService.getOrderPage(pageDto.getCurrentpage(), pageDto.getSize()));
+    @ApiOperation("查询所有未完成订单(分页)")
+    @GetMapping("/orders/unsolved")
+    public Result getUnsolved(@Validated PageDto pageDto) {
+        ArrayList<Integer> statusList =new ArrayList<>(6);
+        statusList.add(OrdersServiceImpl.ORDER_EXCHANGING);
+        statusList.add(OrdersServiceImpl.ORDER_WAITING);
+        List<HashMap<String,String>> unsolved = ordersService.getOrdersAndUsersPageWithStatus(pageDto.getCurrentpage(), pageDto.getSize(), null,statusList);
+        return Result.success(unsolved);
     }
 
 
     @ApiOperation("查询所有历史订单")
     @GetMapping("/orders/history")
     public Result allHistory(@Validated @NotNull PageDto pageDto) {
-        List<HashMap<String, String>> iPage = ordersService.getHistoryOrdersAndUsersPage(pageDto.getCurrentpage(), pageDto
-                .getSize(), null);
+        ArrayList<Integer> statusList =new ArrayList<>();
+        statusList.add(OrdersServiceImpl.ORDER_FAIL);
+        statusList.add(OrdersServiceImpl.ORDER_SUCCESS);
+        List<HashMap<String, String>> iPage = ordersService.getOrdersAndUsersPageWithStatus(pageDto.getCurrentpage(), pageDto
+                .getSize(), null,statusList);
         return Result.success(iPage);
     }
 
@@ -69,16 +76,21 @@ public class OrdersController {
     @ApiOperation("查询用户历史订单")
     @GetMapping("/orders/history/{uid}")
     public Result getUserHistory(@PathVariable @NotNull @Min(1) Long uid, @Validated @NotNull PageDto pageDto) {
-        List<HashMap<String, String>> iPage = ordersService.getHistoryOrdersAndUsersPage(pageDto.getCurrentpage(), pageDto
-                .getSize(), uid);
+        ArrayList<Integer> statusList =new ArrayList<>(6);
+        statusList.add(OrdersServiceImpl.ORDER_FAIL) ;
+        statusList.add(OrdersServiceImpl.ORDER_SUCCESS);
+        List<HashMap<String, String>> iPage = ordersService.getOrdersAndUsersPageWithStatus(pageDto.getCurrentpage(), pageDto
+                .getSize(), uid,statusList);
         return Result.success(iPage);
     }
 
-    @ApiOperation("获取未接受的订单")
-    @GetMapping("/orders/list")
-    public Result getList() {
+    @ApiOperation("获取等待中的订单(分页)")
+    @GetMapping("/orders/waiting")
+    public Result getWaitingList(@Validated @NotNull PageDto pageDto) {
+        ArrayList<Integer> statusList =new ArrayList<>(6);
+        statusList.add(OrdersServiceImpl.ORDER_WAITING);
         return Result.success(
-                ordersService.getOrdersAndUsersWithStatus(OrdersServiceImpl.ORDER_WAITING));
+                ordersService.getOrdersAndUsersPageWithStatus(pageDto.getCurrentpage(),pageDto.getSize(),null,statusList));
     }
 
     @ApiOperation("接受订单")

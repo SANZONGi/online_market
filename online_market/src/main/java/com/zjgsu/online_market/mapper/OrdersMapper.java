@@ -31,15 +31,18 @@ public interface OrdersMapper extends BaseMapper<Orders> {
     List<HashMap<String, String>> getOrdersAndUsersWithStatus(Integer status);
 
     @Select("<script>" +
-            "SELECT orders.*,users.username,users.address,users.phone " +
-            "FROM orders LEFT JOIN users on users.uid = orders.uid " +
-            "where orders.`status` = #{status}" +
-            "<if test='uid != null'>" +
-            "and orders.uid = #{uid}" +
-            "</if>" +
-            "<if test='current!= null and size != null'>" +
-            "LIMIT #{current}, #{size}" +
-            "</if>" +
+            "SELECT orders.*,users.username,users.address,users.phone\n" +
+            "        FROM orders LEFT JOIN users on users.uid = orders.uid\n" +
+            "        where orders.status in\n" +
+            "        <foreach collection=\"status\" item=\"item\" open=\"(\" close=\")\" separator=\",\">\n" +
+            "            #{item}\n" +
+            "        </foreach>\n" +
+            "        <if test='uid != null'>\n" +
+            "            and orders.uid = #{uid}\n" +
+            "        </if>\n" +
+            "        <if test='current!= null and size != null'>\n" +
+            "            LIMIT #{current}, #{size}\n" +
+            "        </if>"+
             "</script>")
-    List<HashMap<String, String>> getHistoryOrdersAndUsersPageWithStatus(Long current,Integer size, Long uid, Integer status);
+    List<HashMap<String, String>> getOrdersAndUsersPageWithStatus(Long current,Integer size, Long uid, List<Integer> status);
 }

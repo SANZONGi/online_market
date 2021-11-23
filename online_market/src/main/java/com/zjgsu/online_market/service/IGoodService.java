@@ -30,9 +30,10 @@ public interface IGoodService extends IService<Good> {
     Result frozeGoodById(Long gid);
 
     Result unFrozenGood(Long gid);
-
+    @Deprecated
     List<Good> getGoodByPri(@NotNull Integer pri);
 
+    @Deprecated
     List<Good> getGoodBySec(@NotNull Integer pri,@NotNull Integer sec);
 
     @Deprecated
