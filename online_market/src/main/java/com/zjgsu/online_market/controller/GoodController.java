@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjgsu.online_market.common.annotations.LoginRequired;
+import com.zjgsu.online_market.common.dto.GoodDto;
 import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.security.PublicKey;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -42,18 +44,18 @@ public class GoodController {
     @ApiOperation("全部未下架商品")
     @GetMapping("/good")
     public Result list() {
-        return Result.success( goodService.list(new QueryWrapper<Good>().ne("status", 2)));
+        return Result.success(goodService.list(new QueryWrapper<Good>().ne("status", 2)));
     }
 
     @ApiOperation("发布商品")
     @LoginRequired(required = true)
     @PutMapping("/good")
-    public Result publishGood(@Validated Good good,@NotNull(message = "无图片") List<MultipartFile> files) throws IOException {
-        int res = goodService.publish(good,files);
+    public Result publishGood(@Validated Good good, @NotNull(message = "无图片") List<MultipartFile> files) throws IOException {
+        int res = goodService.publish(good, files);
         if (res == 0)
             return Result.success("发布成功");
         else
-            return Result.fail("发布失败",res);
+            return Result.fail("发布失败", res);
     }
 
     @ApiOperation("根据id获取商品")
@@ -67,25 +69,37 @@ public class GoodController {
 
     @ApiOperation("根据搜索获取商品(搜索栏)")
     @GetMapping("/good/search")
-    public Result getGoodBySearch(@NotNull(message = "空参数") @NotBlank(message = "空参数") String val)
-    {
-        List<Good> goods = goodService.getGoodBySearch(val);
-        return Result.success(goods);
+    public Result getGoodBySearch(@NotNull(message = "空参数") @NotBlank(message = "空参数") String val) {
+        List<GoodDto> goodDtoList = goodService.getGoodDtoList();
+        List<GoodDto> searchRes = goodDtoList
+                .stream()
+                .filter(goodDto ->
+                        (goodDto.getGname().matches(".*" + val + ".*") || goodDto.getDescription().matches(".*" + val + ".*")))
+                .collect(Collectors.toList());
+        return Result.success(searchRes);
     }
 
 
     @ApiOperation("根据一级类别搜索")
     @GetMapping("/good/catalogue/{pri}")
-    public Result getGoodByPri(@PathVariable @NotNull(message = "空参数") Integer pri)
-    {
-        return Result.success(goodService.getGoodByPri(pri));
+    public Result getGoodByPri(@PathVariable @NotNull(message = "空参数") Integer pri) {
+        List<GoodDto> goodDtoList = goodService.getGoodDtoList();
+        List<GoodDto> searchRes = goodDtoList
+                .stream()
+                .filter(goodDto -> goodDto.getPriCata().equals(pri))
+                .collect(Collectors.toList());
+        return Result.success(searchRes);
     }
 
     @ApiOperation("根据二级类别搜索")
     @GetMapping("/good/catalogue/{pri}/{sec}")
-    public Result getGoodBySec(@PathVariable @NotNull Integer pri,@PathVariable @NotNull Integer sec)
-    {
-        return Result.success(goodService.getGoodBySec(pri,sec));
+    public Result getGoodBySec(@PathVariable @NotNull Integer pri, @PathVariable @NotNull Integer sec) {
+        List<GoodDto> goodDtoList = goodService.getGoodDtoList();
+        List<GoodDto> searchRes = goodDtoList
+                .stream()
+                .filter(goodDto -> (goodDto.getPriCata().equals(pri) && goodDto.getSecCata().equals(sec)))
+                .collect(Collectors.toList());
+        return Result.success(searchRes);
     }
 
     @ApiOperation("是否存在未下架商品")
@@ -98,7 +112,7 @@ public class GoodController {
     @LoginRequired(required = true)
     @GetMapping("good/frozen")
     public Result goodInSell() {
-       return Result.success(goodService.getFrozenGood());
+        return Result.success(goodService.getFrozenGood());
     }
 
     @ApiOperation("根据id冻结商品")
@@ -107,12 +121,14 @@ public class GoodController {
     public Result frozeGood(@PathVariable("gid") @NotNull(message = "gid不能为空") Long gid) {
         return goodService.frozeGoodById(gid);
     }
+
     @ApiOperation("根据id解冻商品")
     @LoginRequired(required = true)
     @PostMapping("good/unfrozen/{gid}")
     public Result unFrozenGood(@PathVariable("gid") @NotNull(message = "gid不能为空") Long gid) {
         return goodService.unFrozenGood(gid);
     }
+
     @ApiOperation("查询历史商品")
     @GetMapping("/good/listofhis")
     public Result listOfHis(@Validated PageDto pageDto) {
@@ -124,8 +140,7 @@ public class GoodController {
 
     @ApiOperation("获取一个带图片的商品类")
     @GetMapping("/good/dto")
-    public Result getGoodDtoList()
-    {
+    public Result getGoodDtoList() {
         return Result.success(goodService.getGoodDtoList());
     }
 

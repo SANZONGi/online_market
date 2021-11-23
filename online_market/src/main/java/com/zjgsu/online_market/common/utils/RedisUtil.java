@@ -9,11 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Redis工具类
- * @author ZENG.XIAO.YAN
- * @date   2018年6月7日
- */
 @Component
 public final class RedisUtil {
 
