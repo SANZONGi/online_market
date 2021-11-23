@@ -13,6 +13,7 @@
 <!--            </if>-->
 <!--            <if test="price!= null">-->
 <!--                price,-->
+
 <!--            </if>-->
 <!--            <if test="stock!= null">-->
 <!--                stock,-->

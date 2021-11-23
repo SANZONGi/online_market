@@ -35,6 +35,7 @@ public interface IGoodService extends IService<Good> {
 
     List<Good> getGoodBySec(@NotNull Integer pri,@NotNull Integer sec);
 
+    @Deprecated
     List<Good> getGoodBySearch(@NotNull @NotBlank String val);
 
     List<GoodDto> getGoodDtoList();

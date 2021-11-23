@@ -29,8 +29,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
 //    jwt拦截
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor).addPathPatterns("/**");
-        registry.addInterceptor(roleInterceptor).addPathPatterns("/**");
+//        registry.addInterceptor(jwtInterceptor).addPathPatterns("/**");
+//        registry.addInterceptor(roleInterceptor).addPathPatterns("/**");
     }
 
 
