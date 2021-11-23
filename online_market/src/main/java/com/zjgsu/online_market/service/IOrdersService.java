@@ -1,11 +1,10 @@
 package com.zjgsu.online_market.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.entity.Orders;
+import com.zjgsu.online_market.entity.Page;
 
-import java.util.HashMap;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -21,9 +20,7 @@ public interface IOrdersService extends IService<Orders> {
 
     Integer insertOrders(Orders orders);
 
-    List<HashMap<String, String>> getOrdersAndUsersPageWithStatus(Long current,Integer size, Long uid,List<Integer> status);
-
-    IPage getOrderPage(Long currentpage, Integer size);
+    Page getOrdersAndUsersPageWithStatus(@Min(1) Long current, @Min(1) Integer size, Long uid, List<Integer> status);
 
     Integer successById(Long oid, Long gid);
 
@@ -31,6 +28,5 @@ public interface IOrdersService extends IService<Orders> {
 
     Integer acceptOrder(Long oid,Long gid);
 
-    List<HashMap<String, String>> getOrdersAndUsersWithStatus(Integer status);
-
+    List<Integer> getAllStatus();
 }
