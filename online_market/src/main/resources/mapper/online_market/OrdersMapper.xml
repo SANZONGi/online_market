@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zjgsu.online_market.mapper.OrdersMapper">
-<!--    <select id="getOrdersAndUsersPageWithStatus" resultType="java.util.HashMap">-->
-<!--        SELECT orders.*,users.username,users.address,users.phone-->
-<!--        FROM orders LEFT JOIN users on users.uid = orders.uid-->
-<!--        where orders.status in-->
-<!--        <foreach collection="list" item="item" open="(" close=")" separator=",">-->
-<!--            #{item}-->
-<!--        </foreach>-->
-<!--        <if test='uid != null'>-->
-<!--            and orders.uid = #{uid}-->
-<!--        </if>-->
-<!--        <if test='current!= null and size != null'>-->
-<!--            LIMIT #{current}, #{size}-->
-<!--        </if>-->
-<!--    </select>-->
+
 </mapper>
