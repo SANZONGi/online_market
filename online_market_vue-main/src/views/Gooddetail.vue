@@ -5,21 +5,22 @@
     </el-header>
     <el-container>
       <el-aside width="600px">
-        <div class="block">
-          <el-image
-              style=" width: 500px; height: 500px"
-              :src="url"
-              fit="contain  "></el-image>
-        </div>
+          <div class="block">
+            <el-image
+                style=" width: 500px; height: 500px"
+                :src="url"
+                fit="contain"></el-image>
+          </div>
       </el-aside>
       <el-main v-if="rel">
         <el-form class="des">
-          <el-form-item label="商品名:">{{ this.good['gname'] }}</el-form-item>
-          <el-form-item label="商品价格:">{{ this.good['price'] }}</el-form-item>
-          <el-form-item label="商品描述:">{{ this.good['description'] }}</el-form-item>
-          <el-button v-if="good.status===0" type="primary" @click="Buy">购买</el-button>
-          <el-button v-if="good.status===1" type="info">商品已冻结</el-button>
-          <el-button v-if="good.status===2" type="info">商品已下架</el-button>
+          <el-form-item label="商品名:">{{this.good['gname']}}</el-form-item>
+          <el-form-item label="商品价格:">{{this.good['price']}}</el-form-item>
+          <el-form-item label="商品库存:">{{this.good['stock']}}</el-form-item>
+          <el-form-item label="商品描述:">{{this.good['description']}}</el-form-item>
+          <el-button type="primary" @click="Buy">购买</el-button>
+          <el-button v-if="good.stock < 1" type="info">商品已售空</el-button>
+<!--          <el-button v-if="good.status===2" type="info">商品已下架</el-button>-->
         </el-form>
       </el-main>
     </el-container>
@@ -41,46 +42,59 @@ export default {
   },
   data() {
     return {
-
       rel:true,
       url: 'https://i.loli.net/2021/11/02/xhGdp2qk31SEyMt.jpg',
-      good: {},
+      img:[],
+      good : {}
     }
-  }, methods: {
+  },methods: {
     reload(){
       this.rel = false
       this.$nextTick(function (){
         this.rel = true;
       })
     },
-    Buy() {
+    Buy(){
       this.$router.push({
         name: 'Buy',
-        params: {
+        params : {
           good: this.good
         }
       })
     }
   },
   created() {
+    let gid = this.$route.params.gid
+    if (gid === undefined)
+      gid = localStorage.getItem('gid')
+    else
+      localStorage.setItem('gid',gid)
+
     this.$axios({
-      method: 'get',
-      url: '/home'
-    }).then(res => {
-      let obj = res.data.data[0];
-      this.good["uid"] = obj.uid
-      this.good["gid"] = obj.gid
-      this.good["gname"] = obj.gname
-      this.good["image"] = obj.image
-      this.good["price"] = obj.price
-      this.good["stock"] = obj.stock
-      this.good["status"] = obj.status
-      this.good["description"] = obj.description
-      this.url = obj.image
+      method:'get',
+      url: '/v2.0/good/'+gid
+    }).then(res=>{
+      this.good["uid"]=this.$store.getters.getUser.uid
+      this.good["gid"]=res.data.data.gid
+      this.good["gname"]=res.data.data.gname
+      this.good["price"]=res.data.data.price
+      this.good["stock"]=res.data.data.stock
+      this.good["status"]=res.data.data.status
+      this.good["description"]=res.data.data.description
+      this.$axios({
+        method:'get',
+        url:'/v2.0/img/' + gid
+      }).then(res=>{
+        this.img = res.data
+        if (this.img[1] !== undefined) {
+          this.url = this.img[1]
+        }
+        else this.url = this.img[0]
+        console.log(this.url)
+      })
     })
 
     this.reload()
-
   }
 
 }
@@ -89,11 +103,10 @@ export default {
 </script>
 
 <style scoped>
-.block {
+.block{
   margin: 0px 60px;
 }
-
-.des {
+.des{
   margin: 20px 0;
 }
 

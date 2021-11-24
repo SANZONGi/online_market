@@ -28,7 +28,7 @@
                 <i class="el-icon-mobile-phone"></i>
                 买家电话
               </template>
-              {{ order.userphone }}
+              {{ order.phone }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
@@ -49,7 +49,7 @@
                 <i class="el-icon-office-building"></i>
                 联系地址
               </template>
-              {{ order.useraddress }}
+              {{ order.address }}
             </el-descriptions-item>
             <el-descriptions-item v-if="order.status===0">
               <template slot="label">
@@ -113,23 +113,29 @@ export default {
     }
   },
   created() {
-    this.handleCurrentChange(1)
+    this.handleCurrentChange()
   },
   methods: {
-    handleCurrentChange(val) {
-      this.$axios.get("/orders?currentpage=" + val + "&size=" + this.size).then(res => {
-        this.orderslist = res.data.data.records
+    handleCurrentChange() {
+      let url = "/v2.0/orders?currentpage=" + this.currentPage + "&size=" + this.size;
+      // url += "&status=1&status=0"
+      let status =[0,1]
+      for (var i =0; i< status.length;i++){
+        url += "&status="+status[i]
+      }
+      console.log(url)
+      this.$axios.get(url).then(res => {
+        this.orderslist = res.data.data.data
         this.currentPage = res.data.data.current
         this.total = res.data.data.total
         this.size = res.data.data.size
-        for (let i = 0; i < this.orderslist.length; i++) {
-          this.orderslist[i].date = this.orderslist[i].date.replace(/T/g," ")
-        }
-        console.log(this.orderslist)
+        console.log(res)
       })
-      this.$axios.get("/good/alive").then(res=>{
-        this.live = res.data.data
-      })
+
+
+      // this.$axios.get("/v2.0/good/alive").then(res=>{
+      //   this.live = res.data.data
+      // })
     },
     accept(order) {
       let data = new FormData;
@@ -140,29 +146,33 @@ export default {
       this.$axios({
         data:data,
         method:"post",
-        url: "/orders/accept/"
+        url: "/v2.0/orders/accept/"  + order.oid,
 
       }).then((res) => {
-        this.$axios({
-          method: "post",
-          url: "good/frozen/"+ order.gid
-        })
-        if (res.data.code !== 200)
-          console.log(res)
-          this.$message.success(res.data.msg);
+        // this.$axios({
+        //   method: "post",
+        //   url: "good/frozen/"+ order.gid
+        // })
+        // if (res.data.code !== 200)
+        //   console.log(res)
+        //   this.$message.warning(res.data.msg);
         this.reload()//刷新
+        console.log(res)
       })
     },
     reject(order) {
+      let data = new FormData;
+      data.append("gid",order.gid)
+      data.append("oid",order.oid)
       this.$axios({
+        data:data,
         method:"post",
-        url: "/orders/reject/"+order.oid
+        url: "/v2.0/orders/reject/"+order.oid
       }).then(() => {
         this.reload()
       })
     },
     success(order) {
-      console.log(order)
       let data = new FormData;
       data.append("gid",order.gid)
       data.append("oid",order.oid)
@@ -171,21 +181,26 @@ export default {
       this.$axios({
         data: data,
         method:"post",
-        url: "/orders/success"
+        url: "/v2.0/orders/success/" + order.oid
       }).then((res) => {
-        //console.log(res.data)
+        console.log(res.data)
         if (res.data.code === 406 && res.data.data === 1){
           this.$message.warning(`当前商品已售空`);
         }else {
           this.$message.success("交易成功");
           this.reload()
         }
+        this.reload()
       })
     },
     fail(order) {
+      let data = new FormData;
+      data.append("gid",order.gid)
+      data.append("oid",order.oid)
       this.$axios({
+        data:data,
         method:"post",
-        url: "/orders/reject/"+order.oid
+        url: "/v2.0/orders/reject/"+order.oid
       }).then(() => {
         this.reload()
       })

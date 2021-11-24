@@ -15,7 +15,11 @@
 import Userdetail from "@/components/Userdetail";
 import Side from "@/components/Side";
 export default {
-  name: 'Userhome',
   components: {Userdetail,Side},
+  name: "Userrecords"
 }
 </script>
+
+<style scoped>
+
+</style>
