@@ -60,8 +60,7 @@ export default {
     this.handleCurrentChange(1)
   }, methods: {
     handleCurrentChange(val) {
-      this.$axios.get("/good/listofhis?currentpage=" + val + "&size=" + this.size
-      ).then(res => {
+      this.$axios.get("/v2.0/good/listofhis?currentpage=" + val + "&size=" + this.size).then(res => {
         this.tableData = res.data.data.records
         this.currentPage = res.data.data.current
         this.total = res.data.data.total

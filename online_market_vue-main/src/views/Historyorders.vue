@@ -28,7 +28,7 @@
                 <i class="el-icon-mobile-phone"></i>
                 买家电话
               </template>
-              {{ order.userphone }}
+              {{ order.phone }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
@@ -49,15 +49,15 @@
                 <i class="el-icon-office-building"></i>
                 联系地址
               </template>
-              {{ order.useraddress }}
+              {{ order.address }}
             </el-descriptions-item>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-office-building"></i>
                 状态
               </template>
-              <el-tag v-if="order.status===2" type="success">交易成功</el-tag>
-              <el-tag v-if="order.status===3" typeof="danger">交易失败</el-tag>
+              <el-tag v-if="order.status===2" >交易成功</el-tag>
+              <el-tag v-if="order.status===3" type="success">交易失败</el-tag>
             </el-descriptions-item>
           </el-descriptions>
         </el-main>
@@ -96,43 +96,17 @@ export default {
     this.handleCurrentChange(1)
   },
   methods: {
-    // handleCurrentChange(val) {
-    //
-    //   this.$axios({
-    //         url: "/orders/history",
-    //         method: "get",
-    //         data: JSON.stringify({
-    //           "currentpage":val,
-    //           "size": this.size
-    //         })
-    //       }
-    //   ).then(res => {
-    //     console.log(JSON.stringify({
-    //       "currentpage":val,
-    //       "size": this.size
-    //     }))
-    //     this.orderslist = res.data.data.records
-    //     this.currentPage = res.data.data.current
-    //     this.total = res.data.data.total
-    //     this.size = res.data.data.size
-    //     for (let i = 0; i < this.orderslist.length; i++) {
-    //       //let arr = this.orderslist[i].date
-    //       //this.orderslist[i].date = arr[0] + "/" + arr[1] + '/' + arr[2] + '  ' + arr[3] + ':' + arr[4] + ':' + arr[5];
-    //
-    //       this.orderslist[i].date = this.orderslist[i].date.replace(/T/g, " ")
-    //     }
-    //   })
-    // }
     handleCurrentChange(val) {
-      this.$axios.get("/orders/history?currentpage="+val+"&size="+this.size).then(res=>{
-        this.orderslist = res.data.data.records
+      this.$axios.get("/v2.0/orders?currentpage="+val+"&size="+this.size).then(res=>{
+        this.orderslist = res.data.data.data
         this.currentPage = res.data.data.current
         this.total = res.data.data.total
         this.size = res.data.data.size
-        for (let i = 0; i < this.orderslist.length; i++) {
-          //let arr = this.orderslist[i].date
-          this.orderslist[i].date = this.orderslist[i].date.replace(/T/g, " ")
-        }
+        // for (let i = 0; i < this.orderslist.length; i++) {
+        //   //let arr = this.orderslist[i].date
+        //   this.orderslist[i].date = this.orderslist[i].date.replace(/T/g, " ")
+        // }
+        console.log(this.orderslist)
       })
     }
   }
