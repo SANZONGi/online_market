@@ -4,14 +4,14 @@
       <div class="div1">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="商品主页" name="first"></el-tab-pane>
-          <el-tab-pane label="------" name="second"></el-tab-pane>
-          <el-tab-pane label="------" name="third"></el-tab-pane>
-          <el-tab-pane label="------" name="fourth"></el-tab-pane>
+<!--          <el-tab-pane label="&#45;&#45;&#45;&#45;&#45;&#45;" name="second"></el-tab-pane>-->
+<!--          <el-tab-pane label="&#45;&#45;&#45;&#45;&#45;&#45;" name="third"></el-tab-pane>-->
+<!--          <el-tab-pane label="&#45;&#45;&#45;&#45;&#45;&#45;" name="fourth"></el-tab-pane>-->
         </el-tabs>
       </div>
       <div class="div2">
-        <el-input>
-          placeholder="请输入内容"
+        <el-input
+          placeholder=""
           v-model="input4">
           <i slot="suffix" class="el-input__icon el-icon-search"></i>
         </el-input>
@@ -37,13 +37,13 @@
       </div>
       <el-main>
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="form1">
-          <el-form-item label="账号" class="item">
+          <el-form-item label="用户名" class="item">
             <el-input v-model="ruleForm.username"></el-input>
           </el-form-item>
           <el-form-item label="电话" prop="phone" class="item">
             <el-input v-model="ruleForm.phone" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="地址" class="item">
+          <el-form-item label="默认交易地点" class="item">
             <el-input v-model="ruleForm.address"></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="password" class="item">
@@ -52,7 +52,7 @@
           <el-form-item label="确认密码" prop="checkPass" class="item">
             <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item style="margin-left: 100px">
             <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
             <el-button @click="resetForm('ruleForm')">重置</el-button>
           </el-form-item>
@@ -121,19 +121,36 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let data = new FormData;
-          data.append('username', this.ruleForm.username)
-          data.append('password', this.ruleForm.password)
-          data.append('phone', this.ruleForm.phone)
-          data.append('address', this.ruleForm.address)
+          // let data = new FormData;
+          // data.append('username', this.ruleForm.username)
+          // data.append('password', this.ruleForm.password)
+          // data.append('phone', this.ruleForm.phone)
+          // data.append('address', this.ruleForm.address)
+          var data={}
+          data.username = this.ruleForm.username
+          data.password = this.ruleForm.password
+          data.phone = this.ruleForm.phone
+          data.address = this.ruleForm.address
+
           this.$axios({
-            method: 'post',
-            url: '/users/insertuser',
-            data: data
+            headers:{
+              'Content-Type':'application/json;charset=UTF-8',
+            },
+            dataType:'JSON',
+            method: 'put',
+            url: '/v2.0/users',
+            data:data
+            //data: data
+
           }).then(res => {
             console.log(res.data)
+            this.$message({
+              type:"success",
+              message:"注册成功"
+            })
           }).catch()
           {
+            console.log(JSON.stringify(data))
             console.log("register err")
           }
         } else {
@@ -153,7 +170,7 @@ export default {
 <style>
 .div1 {
   float: left;
-  width: 550px;
+  width: 450px;
 }
 
 .div2 {
@@ -177,10 +194,13 @@ export default {
 
 .form1 {
   margin: 0 auto;
+  /*margin-top: 0;*/
+  /*margin-left: 200px;*/
   max-width: 500px;
 }
 
 .item {
+  width: 400px;
   margin: 40px auto;
 }
 

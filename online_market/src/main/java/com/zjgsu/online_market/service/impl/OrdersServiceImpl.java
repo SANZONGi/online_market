@@ -1,12 +1,10 @@
 package com.zjgsu.online_market.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Orders;
+import com.zjgsu.online_market.entity.Page;
 import com.zjgsu.online_market.mapper.GoodMapper;
 import com.zjgsu.online_market.mapper.OrdersMapper;
 import com.zjgsu.online_market.service.IOrdersService;
@@ -16,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -27,10 +27,10 @@ import java.time.LocalDateTime;
  */
 @Service
 public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements IOrdersService {
-    private final static Integer ORDER_WAITING = 0;
-    private final static Integer ORDER_EXCHANGING = 1;
-    private final static Integer ORDER_SUCCESS = 2;
-    private final static Integer ORDER_FAIL = 3;
+    public final static Integer ORDER_WAITING = 0;
+    public final static Integer ORDER_EXCHANGING = 1;
+    public final static Integer ORDER_SUCCESS = 2;
+    public final static Integer ORDER_FAIL = 3;
 
     @Autowired
     private GoodMapper goodMapper;
@@ -40,6 +40,15 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
 
     @Autowired
     private OrdersMapper ordersMapper;
+
+    public List<Integer> getAllStatus() {
+        List<Integer> statusList = new ArrayList<>();
+        statusList.add(ORDER_WAITING);
+        statusList.add(ORDER_FAIL);
+        statusList.add(ORDER_EXCHANGING);
+        statusList.add(ORDER_SUCCESS);
+        return statusList;
+    }
 
     public Integer setOrderStatusById(Long oid, Integer status) {
         UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<Orders>().eq("oid", oid).set("status", status);
@@ -58,24 +67,20 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         return 0;
     }
 
-    public IPage getHistoryListPage(Long currentpage, Integer size, Long uid) {
-        Page page = new Page(currentpage, size);
-        IPage iPage;
-        if (uid == null) {
-            iPage = ordersMapper.selectPage(page, new QueryWrapper<Orders>().orderByDesc("oid")
-                    .eq("status", ORDER_SUCCESS).or().eq("status", ORDER_FAIL));
-        } else {
-            iPage = ordersMapper.selectPage(page, new QueryWrapper<Orders>().orderByDesc("oid").eq("uid", uid).and(
-                    wrapper -> wrapper.eq("status", ORDER_SUCCESS).or().eq("status", ORDER_FAIL)));
+    public Page getOrdersAndUsersPageWithStatus(Long current, Integer size, Long uid, List<Integer> status) {
+        Page page = new Page();
+        page.setTotal(ordersMapper.countOrdersAndUsersPageWithStatus(uid,status));
+        if (current != null && size != null) {
+            if (current - 1 < 0 || size < 0) throw new  RuntimeException("分页参数错误");
+            page.setCurrent(current);
+            page.setSize(size);
+            current = (current - 1) * size;
+        }else {
+            page.setCurrent(1L);
+            page.setSize((int) (page.getTotal()+1));
         }
-        return iPage;
-    }
-
-    public IPage getOrderPage(Long currentpage, Integer size) {
-        Page page = new Page(currentpage, size);
-        IPage iPage = ordersMapper.selectPage(page, new QueryWrapper<Orders>().orderByDesc("oid")
-                .eq("status", ORDER_WAITING).or().eq("status", ORDER_EXCHANGING));
-        return iPage;
+        page.setData(ordersMapper.getOrdersAndUsersPageWithStatus(current, size, uid, status));
+        return page;
     }
 
     @Transactional

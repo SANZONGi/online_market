@@ -16,20 +16,23 @@ const CheckBuyer = () => import('./views/CheckBuyer')
 const Historyorders = () => import('./views/Historyorders')
 const Historygood = () => import('./views/Historygood')
 const Frozen = () => import('./views/Frozen')
-
+const Custhistory = () => import('./views/Custhistory')
+const Changecust = () => import('./views/Changecust')
+const Checkuser = () => import('./views/Checkuser')
+const Userrecords = () => import('./views/Userrecords')
 
 export default new VueRouter({
     routes: [
         {
             path: '/',
-            redirect: {name: "Gooddetail"},
+            redirect: {name: "Home"},
         },
         {
             path: '/home',
             name: 'Home',
             component: Home,
             meta: {
-                requireAuth: false
+                requireAuth: false//值为true表示进入这个路由是需要登录的
             }
         },
         {
@@ -37,7 +40,7 @@ export default new VueRouter({
             name: 'Login',
             component: Login,
             meta: {
-                requireAuth: true
+                requireAuth: false
             }
         },
         {
@@ -77,7 +80,7 @@ export default new VueRouter({
             path: '/buy',
             name: 'Buy',
             component: Buy,
-            meta: {requireAuth: false}
+            meta: {requireAuth: true}
         },
         {
             path: '/checkBuyer',
@@ -101,6 +104,30 @@ export default new VueRouter({
             path: '/frozen',
             name: 'Frozen',
             component: Frozen,
+            meta: {requireAuth: true}
+        },
+        {
+            path: '/changecust',
+            name: 'Changecust',
+            component:Changecust,
+            meta: {requireAuth: true}
+        },
+        {
+            path: '/custhistory',
+            name: 'Custhistory',
+            component:Custhistory,
+            meta: {requireAuth: true}
+        },
+        {
+            path: '/checkuser',
+            name: 'Checkuser',
+            component:Checkuser,
+            meta: {requireAuth: true}
+        },
+        {
+            path: '/userrecords',
+            name: 'Userrecords',
+            component:Userrecords,
             meta: {requireAuth: true}
         }
 

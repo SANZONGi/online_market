@@ -5,12 +5,14 @@ import com.zjgsu.online_market.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author xjj
@@ -22,5 +24,33 @@ public interface OrdersMapper extends BaseMapper<Orders> {
     @Select("select * from orders where oid = #{oid} for update")
     Orders getOrderByOidForUpdate(@Param("oid") Long oid);
 
+    @Select("<script>" +
+            "SELECT orders.*,users.username,users.address,users.phone\n" +
+            "        FROM orders LEFT JOIN users on users.uid = orders.uid\n" +
+            "        where orders.status in\n" +
+            "        <foreach collection=\"status\" item=\"item\" open=\"(\" close=\")\" separator=\",\">\n" +
+            "            #{item}\n" +
+            "        </foreach>\n" +
+            "        <if test='uid != null'>\n" +
+            "            and orders.uid = #{uid}\n" +
+            "        </if>\n" +
+            "        <if test='current!= null and size != null'>\n" +
+            "            LIMIT #{current}, #{size}\n" +
+            "        </if>"+
+            "</script>")
+    List<HashMap<String, Object>> getOrdersAndUsersPageWithStatus(Long current, Integer size, Long uid, List<Integer> status);
 
+
+    @Select("<script>" +
+            "SELECT count(1)\n" +
+            "        FROM orders LEFT JOIN users on users.uid = orders.uid\n" +
+            "        where orders.status in\n" +
+            "        <foreach collection=\"status\" item=\"item\" open=\"(\" close=\")\" separator=\",\">\n" +
+            "            #{item}\n" +
+            "        </foreach>\n" +
+            "        <if test='uid != null'>\n" +
+            "            and orders.uid = #{uid}\n" +
+            "        </if>\n" +
+            "</script>")
+    Long countOrdersAndUsersPageWithStatus(Long uid, List<Integer> status);
 }

@@ -99,7 +99,6 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     @Transactional(readOnly = true)
     public Object checkUser(HttpServletRequest request, LoginDto loginDto) {
         Users users = getUserByUsername(loginDto.getUsername());
-
         if (users == null) {
             return Result.fail(401, "用户不存在", 1);
         }

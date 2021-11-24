@@ -34,7 +34,7 @@ import Userdetail from "@/components/Userdetail";
 import Side from "@/components/Side";
 
 export default {
-  inject: ["reload"],
+  inject: ["reload"],//?
   name: "Changepassword",
   components: {Side, Userdetail},
   data() {
@@ -94,7 +94,7 @@ export default {
           data.append("oldpassword",this.ruleForm.oldpassword)
           this.$axios({
             method:"post",
-            url: "/users/changepassword",
+            url: "/v2.0/users",
             data: data
           }).then(res => {
             if (res.data.code === 200)

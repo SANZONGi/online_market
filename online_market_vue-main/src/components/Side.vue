@@ -33,9 +33,19 @@
             <i class="el-icon-document"></i>
             我的商品</template>
           <el-menu-item-group>
-            <el-menu-item index="3-1" @click="publish">商品发布</el-menu-item>
+            <el-menu-item index="3-1" @click="publish" v-if="flag">商品发布</el-menu-item>
             <el-menu-item index="3-2" @click="historygood">历史商品</el-menu-item>
             <el-menu-item index="3-3" @click="frozengood">冻结商品</el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="4">
+          <template slot="title">
+            <i class="el-icon-user"></i>
+            用户信息
+          </template>
+          <el-menu-item-group>
+            <el-menu-item index="4-1" @click="checkuser">查看用户信息</el-menu-item>
+            <el-menu-item index="4-2" @click="userrecords">用户下单记录</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
       </el-menu>
@@ -45,37 +55,11 @@
 <script>
 export default {
   name: "Side",
-  // data(){
-  //   var validatename = (rule, value, callback) => {
-  //     if (value === '') {
-  //       callback(new Error("请输入正确的名称(中文)"))
-  //     } else callback();
-  //   };
-  // },
-  //  var validatephone = (rule, value, callback) => {
-  //   if (value.length !== 11) {
-  //     callback(new Error("请输入正确的价格(仅限数字)"))
-  //   } else{
-  //     callback();}
-
-  //
-  //   var tel = "123456789";
-  //   if(!/^\d+$/.test(tel)){
-  //   alert("请输入正确的电话号码");
-  // }
-  //
-  //
-  //
-  //
-
-
-  // }
-  // var validateaddress = (rule, value, callback) => {
-  //   if (value === '') {
-  //     callback(new Error("请输入地址"))
-  //   } else
-  //     callback();
-  // };
+  data(){
+    return{
+      flag : 1
+    }
+  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath)
@@ -93,20 +77,23 @@ export default {
       this.$router.push({name: 'Historyorders'})
     },publish()
     {
-      this.$axios({
-        method:"get",
-        url:"/good/alive"//从good/alive接受数据
-      }).then(res => {
-        if (res.data.data === true)       //有商品激活
-        {
-          this.$router.push({name: 'Publish'})
-        }else {
-          this.$message({
-            type: "info",
-            message: "已有商品,无法上架新商品"
-          })
-        }
-      })
+      // this.$axios({
+      //   method:"get",
+      //   url:"/good/alive"//从good/alive接受数据
+      // }).then(res => {
+      //   if (res.data.data === true)       //有商品激活
+      //   {
+      //     this.flag = 1
+      //     this.$router.push({name: 'Publish'})
+      //   }else {
+      //     this.flag = 0
+      //     this.$message({
+      //       type: "info",
+      //       message: "已有商品,无法上架新商品"
+      //     })
+      //   }
+      // })
+      this.$router.push("Publish")
 
     },historygood(){
       this.$router.push({
@@ -116,7 +103,24 @@ export default {
       this.$router.push({
         name: "Frozen"
       })
+    },checkuser(){
+      this.$router.push({ name:"Checkuser"})
+    },userrecords(){
+      this.$router.push({ name:"Userrecords"})
     }
+  },
+  created() {
+    // this.$axios({
+    //   method:"get",
+    //   url:"/good/alive"//从good/alive接受数据
+    // }).then(res => {
+    //   if (res.data.data === true)       //有商品激活
+    //   {
+    //     this.flag = 1
+    //   }else {
+    //     this.flag = 0
+    //   }
+    // })
   }
 }
 </script>

@@ -1,8 +1,11 @@
 package com.zjgsu.online_market.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zjgsu.online_market.entity.Orders;
+import com.zjgsu.online_market.entity.Page;
+
+import javax.validation.constraints.Min;
+import java.util.List;
 
 /**
  * <p>
@@ -17,13 +20,13 @@ public interface IOrdersService extends IService<Orders> {
 
     Integer insertOrders(Orders orders);
 
-    IPage getHistoryListPage(Long currentpage, Integer size,Long uid);
-
-    IPage getOrderPage(Long currentpage, Integer size);
+    Page getOrdersAndUsersPageWithStatus(@Min(1) Long current, @Min(1) Integer size, Long uid, List<Integer> status);
 
     Integer successById(Long oid, Long gid);
 
     Integer rejectById(Long oid, Long gid);
 
     Integer acceptOrder(Long oid,Long gid);
+
+    List<Integer> getAllStatus();
 }

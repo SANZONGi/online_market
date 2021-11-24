@@ -1,16 +1,20 @@
 package com.zjgsu.online_market;
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
+import com.zjgsu.online_market.mapper.OrdersMapper;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class OnlineMarketApplicationTests {
-//    @Autowired
-//    private EncypterUtil encypterUtil;
-//    //    private Param xjj;
-//    @Autowired
-//    private OrdersMapper ordersMapper;
-//
-//    @Test
-//    void contextLoads() {
-//    }
+    @Autowired
+    OrdersMapper ordersMapper;
+    @Test
+    void contextLoads() {
+
+    }
 }

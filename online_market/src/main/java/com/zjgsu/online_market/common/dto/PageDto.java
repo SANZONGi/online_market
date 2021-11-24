@@ -15,4 +15,5 @@ public class PageDto {
     @Digits(integer = 9, fraction = 0)
     private Integer size;
 
+
 }

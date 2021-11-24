@@ -69,7 +69,7 @@ export default {
   },created() {
     this.$axios({
       method:"get",
-      url: "good/frozen"
+      url: "/v2.0/good/frozen"
     }).then(res => {
       this.goods = res.data.data
       console.log(res.data.data)
