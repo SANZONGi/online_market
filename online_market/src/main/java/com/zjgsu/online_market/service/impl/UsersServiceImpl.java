@@ -1,6 +1,5 @@
 package com.zjgsu.online_market.service.impl;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -36,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements IUsersService {
+    private static final Integer LOWESTSTRENGTH = 2;
     @Autowired
     private UsersMapper usersMapper;
     @Autowired
@@ -46,6 +46,18 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     private EncypterUtil encypterUtil;
     @Autowired
     private RoleMapper roleMapper;
+
+
+    public Integer checkPasswordStrength(String pwd) {
+        int strength;
+        if (pwd == null) return 0;
+        pwd = pwd.trim();
+        strength = pwd.length() >= 9?1:0;
+        if (pwd.matches(".*[A-Z].*") || pwd.matches(".*[a-z].*")) {
+            strength++;
+        }
+        return strength;
+    }
 
     public Users getUserByUsername(String username) {
         if (redisTemplate.hasKey(username)) {     //redis中有记录，200s
@@ -72,6 +84,10 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         if (usersMapper.getUserByUsername(users.getUsername()) != null) {
             return 2;
         } else {
+            if (checkPasswordStrength(users.getPassword()) < LOWESTSTRENGTH)
+            {
+                return 4;
+            }
             String enc = encypterUtil.Encrypt(users.getPassword());
             users.setPassword(enc);
             try {     //防止过程中用户名被注册
@@ -121,19 +137,14 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     }
 
     @Transactional
-    public Result changePassword(String token, String password, String oldpassword, Long uid) {
-        DecodedJWT tokenBody = jwtUtils.verify(token);
-        //保证是本用户在网页上操作，除非既泄露了密码又泄露了token
-        String tokenUserid = tokenBody.getClaim("uid").asString();
-        if (!tokenUserid.equals(String.valueOf(uid))) {
-            //forbidden
-            return Result.fail(403, "用户不一致", null);
-        }
+    public Result changePassword(String password, String oldpassword, Long uid) {
         Users users = getUserByUid(uid.toString());
         if (users == null) {
             return Result.fail(401, "用户不存在", 1);
         }
-
+        if (checkPasswordStrength(password) < LOWESTSTRENGTH) {
+            return Result.fail( "强度过低", 3);
+        }
         //数据库里的真实密码
         String truePwd = encypterUtil.Decrypt(users.getPassword());
 

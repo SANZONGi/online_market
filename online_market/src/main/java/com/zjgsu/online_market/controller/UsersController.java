@@ -90,8 +90,8 @@ public class UsersController {
     @ApiOperation("修改密码")
     @LoginRequired(required = true)
     @PostMapping("/users")
-    public Result changePassword(@RequestHeader("token") String token, @NotNull(message = "密码不能为空") String password, @NotNull(message = "旧密码不能为空") String oldpassword, @NotNull(message = "uid不能为空") Long uid) {
-        return usersService.changePassword(token, password, oldpassword, uid);
+    public Result changePassword(@NotNull(message = "密码不能为空") String password, @NotNull(message = "旧密码不能为空") String oldpassword, @NotNull(message = "uid不能为空") Long uid) {
+        return usersService.changePassword(password, oldpassword, uid);
     }
 
 }
