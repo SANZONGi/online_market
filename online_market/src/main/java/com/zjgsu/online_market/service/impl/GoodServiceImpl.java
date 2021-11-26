@@ -42,9 +42,9 @@ import java.util.UUID;
 @Service
 @PropertySource("classpath:application.yml")
 public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IGoodService {
-    private final static Integer GOOD_SALE = 0;
-    private final static Integer GOOD_FROZEN = 1;
-    private final static Integer GOOD_SELLOUT = 2;
+    public final static Integer GOOD_SALE = 0;
+    public final static Integer GOOD_FROZEN = 1;
+    public final static Integer GOOD_SELLOUT = 2;
 
     @Autowired
     private GoodMapper goodMapper;

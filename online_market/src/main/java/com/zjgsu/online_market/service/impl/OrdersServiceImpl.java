@@ -118,9 +118,13 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     @Transactional
     public Integer successById(Long oid, Long gid) {
         Good good = goodMapper.selectByGidForUpdate(gid);
+        Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
         //商品有问题
         if (good == null || good.getStock() <= 0 || good.getStatus() == 2) return 1;
-        if (goodMapper.updateStatus(ORDER_SUCCESS, gid) == 0 || setOrderStatusById(oid, ORDER_SUCCESS) == 0) {
+        if (orders == null || orders.getStatus() == 2 || orders.getStatus() == 3) return 3;
+        good.setStock(good.getStock() - 1);
+        if (good.getStock() == 0) good.setStatus(GoodServiceImpl.GOOD_SELLOUT);
+        if (goodMapper.updateById(good) == 0 || setOrderStatusById(oid, ORDER_SUCCESS) == 0) {
             return 2;
         }
         redisTemplate.delete(String.valueOf(gid));
