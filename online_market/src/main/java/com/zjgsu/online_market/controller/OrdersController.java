@@ -149,6 +149,9 @@ public class OrdersController {
             return Result.fail(406, "无此商品", res);
         } else if (res == 2) {
             return Result.fail("更新失败", res);
+        }else if (res == 3)
+        {
+            return Result.fail("订单不存在或已完成",res);
         }
         return Result.success(gid);
     }
