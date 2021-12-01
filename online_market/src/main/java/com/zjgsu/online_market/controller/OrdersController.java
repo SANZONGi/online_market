@@ -134,9 +134,9 @@ public class OrdersController {
     public Result reject(@PathVariable @NotNull(message = "oid为空") Long oid, @NotNull Long gid) {
         int res = ordersService.rejectById(oid, gid);
         if (res == 1)
-            return Result.fail(400, "商品不存在", res);
+            return Result.fail( "订单错误", res);
         else if (res == 2)
-            return Result.fail(400, "订单不存在", res);
+            return Result.fail("商品错误", res);
         return Result.success(oid);
     }
 
@@ -146,11 +146,7 @@ public class OrdersController {
     public Result success(@PathVariable @NotNull(message = "oid为空") Long oid, @NotNull(message = "oid为空") Long gid) {
         int res = ordersService.successById(oid, gid);
         if (res == 1) {
-            return Result.fail("商品不足", res);
-        } else if (res == 2) {
-            return Result.fail("更新失败", res);
-        }else if (res == 3) {
-            return Result.fail("订单不存在或已完成",res);
+            return Result.fail("订单已结束", res);
         }
         return Result.success(gid);
     }

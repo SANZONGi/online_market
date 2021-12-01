@@ -71,15 +71,15 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
 
     public Page getOrdersAndUsersPageWithStatus(Long current, Integer size, Long uid, List<Integer> status) {
         Page page = new Page();
-        page.setTotal(ordersMapper.countOrdersAndUsersPageWithStatus(uid,status));
+        page.setTotal(ordersMapper.countOrdersAndUsersPageWithStatus(uid, status));
         if (current != null && size != null) {
-            if (current - 1 < 0 || size < 0) throw new  RuntimeException("分页参数错误");
+            if (current - 1 < 0 || size < 0) throw new RuntimeException("分页参数错误");
             page.setCurrent(current);
             page.setSize(size);
             current = (current - 1) * size;
-        }else {
+        } else {
             page.setCurrent(1L);
-            page.setSize((int) (page.getTotal()+1));
+            page.setSize((int) (page.getTotal() + 1));
         }
         page.setData(ordersMapper.getOrdersAndUsersPageWithStatus(current, size, uid, status));
         return page;
@@ -89,48 +89,51 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     public Integer acceptOrder(Long oid, Long gid) {
         /*获取order的时候加行锁，防止下面更新之前被并发线程更改*/
         Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
-        Good good = goodMapper.selectById(gid);
+        Good good = goodMapper.selectByGidForUpdate(gid);
         if (orders == null || orders.getStatus().equals(ORDER_EXCHANGING)) {
             return 2;
         }
         if (good == null || good.getStock() <= 0 || good.getStock() - orders.getNumber() < 0) {
             return 1;
         }
-
-        if (setOrderStatusById(oid, ORDER_EXCHANGING) == 0) {
-            return 3;
+        try {
+            setOrderStatusById(oid, ORDER_EXCHANGING);
+            good.setStock(good.getStock() - orders.getNumber());
+            if (good.getStock() == 0) {
+                good.setStatus(GoodServiceImpl.GOOD_SELLOUT);
+            }
+            goodMapper.updateById(good);
+        }catch (Exception e){
+            log.error(e.getMessage());
         }
-        //匹配0条更新失败
-        if (goodMapper.decreaseById(gid) == 0) {
-            return 4;
-        }
+        redisTemplate.delete(String.valueOf(gid));
         return 0;
     }
 
     @Transactional
     public Integer rejectById(Long oid, Long gid) {
-        if (goodMapper.increaseById(gid) == 0) {
-            return 1;
-        }
-        if (setOrderStatusById(oid, ORDER_FAIL) == 0) {
-            return 2;
-        }
+        Good good = goodMapper.selectByGidForUpdate(gid);
+        Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
+        if (orders == null || orders.getStatus() == 2 || orders.getStatus() == 3) return 1;
+        //商品有问题
+        if (good == null || good.getStatus() == 2) return 2;
+
+
+        good.setStock(good.getStock() + orders.getNumber()).setStatus(GoodServiceImpl.GOOD_SALE);
+        goodMapper.updateById(good);
+        setOrderStatusById(oid, ORDER_FAIL);
+
+
+        redisTemplate.delete(String.valueOf(gid));
         return 0;
     }
 
     @Transactional
     public Integer successById(Long oid, Long gid) {
-        Good good = goodMapper.selectByGidForUpdate(gid);
         Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
-        if (orders == null || orders.getStatus() == 2 || orders.getStatus() == 3) return 3;
-        //商品有问题
-        if (good == null || good.getStock() <= 0 || good.getStatus() == 2 || good.getStock() - orders.getNumber() < 0) return 1;
-        good.setStock(good.getStock() - orders.getNumber());
-        if (good.getStock() == 0) good.setStatus(GoodServiceImpl.GOOD_SELLOUT);
-        if (goodMapper.updateById(good) == 0 || setOrderStatusById(oid, ORDER_SUCCESS) == 0) {
-            return 2;
-        }
-        redisTemplate.delete(String.valueOf(gid));
+        if (orders == null || orders.getStatus() == 2 || orders.getStatus() == 3) return 1;
+        orders.setStatus(ORDER_SUCCESS);
+        ordersMapper.updateById(orders);
         return 0;
     }
 }
