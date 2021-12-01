@@ -116,7 +116,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
         if (orders == null || orders.getStatus() == 2 || orders.getStatus() == 3) return 1;
         //商品有问题
-        if (good == null || good.getStatus() == 2) return 2;
+        if (good == null) return 2;
 
 
         good.setStock(good.getStock() + orders.getNumber()).setStatus(GoodServiceImpl.GOOD_SALE);
