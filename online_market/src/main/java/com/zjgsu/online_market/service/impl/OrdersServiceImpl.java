@@ -58,6 +58,8 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     public Integer insertOrders(Orders orders) {
         LocalDateTime now = LocalDateTime.now();
         orders.setDate(now).setOid(null);
+        Good good = goodMapper.selectById(orders.getGid());
+        orders.setAmount(orders.getNumber() * good.getPrice());
         try {
             ordersMapper.insert(orders);
         } catch (Exception e) {
@@ -88,12 +90,13 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         /*获取order的时候加行锁，防止下面更新之前被并发线程更改*/
         Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
         Good good = goodMapper.selectById(gid);
-        if (good == null || good.getStock() <= 0) {
-            return 1;
-        }
         if (orders == null || orders.getStatus().equals(ORDER_EXCHANGING)) {
             return 2;
         }
+        if (good == null || good.getStock() <= 0 || good.getStock() - orders.getNumber() < 0) {
+            return 1;
+        }
+
         if (setOrderStatusById(oid, ORDER_EXCHANGING) == 0) {
             return 3;
         }
@@ -119,10 +122,10 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     public Integer successById(Long oid, Long gid) {
         Good good = goodMapper.selectByGidForUpdate(gid);
         Orders orders = ordersMapper.getOrderByOidForUpdate(oid);
-        //商品有问题
-        if (good == null || good.getStock() <= 0 || good.getStatus() == 2) return 1;
         if (orders == null || orders.getStatus() == 2 || orders.getStatus() == 3) return 3;
-        good.setStock(good.getStock() - 1);
+        //商品有问题
+        if (good == null || good.getStock() <= 0 || good.getStatus() == 2 || good.getStock() - orders.getNumber() < 0) return 1;
+        good.setStock(good.getStock() - orders.getNumber());
         if (good.getStock() == 0) good.setStatus(GoodServiceImpl.GOOD_SELLOUT);
         if (goodMapper.updateById(good) == 0 || setOrderStatusById(oid, ORDER_SUCCESS) == 0) {
             return 2;
