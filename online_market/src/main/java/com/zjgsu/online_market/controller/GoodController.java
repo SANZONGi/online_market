@@ -136,10 +136,15 @@ public class GoodController {
         return Result.success(200, "查询成功", iPage);
     }
 
-    @ApiOperation("获取带图片的商品列表")
+    @ApiOperation("根据状态获取带图片的商品列表")
     @GetMapping("/good/dto")
-    public Result getGoodDtoList() {
-        return Result.success(goodService.getGoodDtoList());
+    public Result getGoodDtoList(@RequestParam(value = "status",required = false) @NotNull List<Integer> status) {
+        List<GoodDto> list = goodService.getGoodDtoList();
+        List<GoodDto> res = list
+                .stream()
+                .filter(dto -> (status.contains(dto.getStatus())))
+                .collect(Collectors.toList());
+        return Result.success(res);
     }
 
 }

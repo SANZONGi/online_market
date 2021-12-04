@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -27,8 +28,6 @@ public class GlobalExceptionHandler {
         log.error("运行时异常",e);
         return Result.fail(400,e.getMessage(),600);
     }
-
-
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = SQLException.class)
@@ -53,7 +52,14 @@ public class GlobalExceptionHandler {
         return Result.fail(400,e.getCause().getMessage(),603);
     }
 
-    @ExceptionHandler(BindException.class)
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Result handler(ConstraintViolationException e) {
+        log.error("参数验证未通过"+e.getMessage());
+        return Result.fail(400, e.getMessage(),604);
+    }
+
+    @ExceptionHandler({BindException.class})
     public Result handler(BindException e) {
         log.error("参数验证未通过"+e.getMessage());
         BindingResult bindingResult = e.getBindingResult();
