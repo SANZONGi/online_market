@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjgsu.online_market.common.annotations.LoginRequired;
-import com.zjgsu.online_market.common.dto.GoodDto;
 import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
@@ -20,7 +19,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -67,37 +65,23 @@ public class GoodController {
 
     @ApiOperation("根据搜索获取商品(搜索栏)")
     @GetMapping("/good/search")
-    public Result getGoodBySearch(@NotNull(message = "空参数") @NotBlank(message = "空参数") String val) {
-        List<GoodDto> goodDtoList = goodService.getGoodDtoList();
-        List<GoodDto> searchRes = goodDtoList
-                .stream()
-                .filter(goodDto ->
-                        (goodDto.getGname().matches(".*" + val + ".*") || goodDto.getDescription().matches(".*" + val + ".*")))
-                .collect(Collectors.toList());
-        return Result.success(searchRes);
+    public Result getGoodBySearch(@NotNull(message = "空参数") @NotBlank(message = "空参数") String val,@NotNull PageDto pageDto) {
+        return Result.success(goodService.getGoodDtoListBySearch(val,pageDto));
     }
 
 
     @ApiOperation("根据一级类别搜索")
     @GetMapping("/good/catalogue/{pri}")
-    public Result getGoodByPri(@PathVariable @NotNull(message = "空参数") Integer pri) {
-        List<GoodDto> goodDtoList = goodService.getGoodDtoList();
-        List<GoodDto> searchRes = goodDtoList
-                .stream()
-                .filter(goodDto -> goodDto.getPriCata().equals(pri))
-                .collect(Collectors.toList());
-        return Result.success(searchRes);
+    public Result getGoodByPri(@PathVariable @NotNull(message = "空参数") Integer pri,@NotNull PageDto pageDto) {
+        new PageDto().pageValid(pageDto);
+        return Result.success(goodService.getGoodDtoListByCata(pri,null,pageDto));
     }
 
     @ApiOperation("根据二级类别搜索")
     @GetMapping("/good/catalogue/{pri}/{sec}")
-    public Result getGoodBySec(@PathVariable @NotNull Integer pri, @PathVariable @NotNull Integer sec) {
-        List<GoodDto> goodDtoList = goodService.getGoodDtoList();
-        List<GoodDto> searchRes = goodDtoList
-                .stream()
-                .filter(goodDto -> (goodDto.getPriCata().equals(pri) && goodDto.getSecCata().equals(sec)))
-                .collect(Collectors.toList());
-        return Result.success(searchRes);
+    public Result getGoodBySec(@PathVariable @NotNull Integer pri, @PathVariable @NotNull Integer sec,@NotNull PageDto pageDto) {
+        new PageDto().pageValid(pageDto);
+        return Result.success(goodService.getGoodDtoListByCata(pri,sec,pageDto));
     }
 
     @ApiOperation("是否存在未下架商品")
@@ -138,13 +122,8 @@ public class GoodController {
 
     @ApiOperation("根据状态获取带图片的商品列表")
     @GetMapping("/good/dto")
-    public Result getGoodDtoList(@RequestParam(value = "status",required = false) @NotNull List<Integer> status) {
-        List<GoodDto> list = goodService.getGoodDtoList();
-        List<GoodDto> res = list
-                .stream()
-                .filter(dto -> (status.contains(dto.getStatus())))
-                .collect(Collectors.toList());
-        return Result.success(res);
+    public Result getGoodDtoList(@RequestParam(value = "status",required = false) @NotNull List<Integer> status,@NotNull PageDto pageDto) {
+        return Result.success(goodService.getGoodDtoListByStatus(status,pageDto));
     }
 
 }

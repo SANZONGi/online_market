@@ -1,12 +1,12 @@
 package com.zjgsu.online_market.service;
 
-import com.zjgsu.online_market.common.dto.GoodDto;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.zjgsu.online_market.entity.Page;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
@@ -37,8 +37,14 @@ public interface IGoodService extends IService<Good> {
     @Deprecated
     List<Good> getGoodBySec(@NotNull Integer pri,@NotNull Integer sec);
 
-    @Deprecated
-    List<Good> getGoodBySearch(@NotNull @NotBlank String val);
+//    @Deprecated
+//    List<Good> getGoodBySearch(@NotNull @NotBlank String val);
 
-    List<GoodDto> getGoodDtoList();
+    Page getGoodDtoListByStatus(List<Integer> status, @NotNull PageDto pageDto);
+
+
+    Page getGoodDtoListBySearch(String val, @NotNull PageDto pageDto);
+
+    Page getGoodDtoListByCata(Integer pri,Integer sec, @NotNull PageDto pageDto);
+
 }

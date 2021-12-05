@@ -3,11 +3,12 @@ package com.zjgsu.online_market.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zjgsu.online_market.common.dto.GoodDto;
+import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Img;
 import com.zjgsu.online_market.entity.Orders;
+import com.zjgsu.online_market.entity.Page;
 import com.zjgsu.online_market.mapper.GoodMapper;
 import com.zjgsu.online_market.mapper.ImgMapper;
 import com.zjgsu.online_market.mapper.OrdersMapper;
@@ -21,7 +22,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
@@ -104,36 +104,48 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
         for (MultipartFile file : files) {
             String origin = file.getOriginalFilename();
             if (origin == null) origin = ".jpg";
-            String fileName = UUID.randomUUID().toString()+origin.substring(origin.lastIndexOf('.'));
-            file.transferTo(new File(realpath+fileName));
-            imgMapper.insert(new Img(good.getGid(),path+fileName));
+            String fileName = UUID.randomUUID().toString() + origin.substring(origin.lastIndexOf('.'));
+            file.transferTo(new File(realpath + fileName));
+            imgMapper.insert(new Img(good.getGid(), path + fileName));
         }
 
         return 0;
     }
 
-    public List<Good> getGoodByPri(@NotNull Integer pri)
-    {
-        QueryWrapper<Good> queryWrapper = new QueryWrapper<Good>().eq("pri_cata",pri);
+    @Deprecated
+    public List<Good> getGoodByPri(@NotNull Integer pri) {
+        QueryWrapper<Good> queryWrapper = new QueryWrapper<Good>().eq("pri_cata", pri);
         return goodMapper.selectList(queryWrapper);
     }
 
-    public List<Good> getGoodBySec(@NotNull Integer pri,@NotNull Integer sec)
-    {
-        QueryWrapper<Good> queryWrapper = new QueryWrapper<Good>().eq("pri_cata",pri).eq("sec_cata",sec);
+    @Deprecated
+    public List<Good> getGoodBySec(@NotNull Integer pri, @NotNull Integer sec) {
+        QueryWrapper<Good> queryWrapper = new QueryWrapper<Good>().eq("pri_cata", pri).eq("sec_cata", sec);
         return goodMapper.selectList(queryWrapper);
     }
 
+
     @Override
-    public List<Good> getGoodBySearch(@NotNull @NotBlank String val) {
-        QueryWrapper<Good> queryWrapper = new QueryWrapper<>();
-        List<Good> goods = goodMapper.selectList(queryWrapper.like("gname",val).or().like("description",val));
-        return goods;
+    public Page getGoodDtoListByStatus(List<Integer> status, @NotNull PageDto pageDto) {
+        new PageDto().pageValid(pageDto);
+        Page page = new Page(pageDto.getCurrentpage(),pageDto.getSize(),goodMapper.countGoodDtoListByStatus(status),goodMapper.getGoodDtoListByStatus(status,(pageDto.getCurrentpage() - 1) * pageDto.getSize(),pageDto.getSize()));
+        return page;
+    }
+
+
+    @Override
+    public Page getGoodDtoListBySearch(String val, @NotNull PageDto pageDto) {
+        val = '%' + val + '%';
+        new PageDto().pageValid(pageDto);
+        Page page = new Page(pageDto.getCurrentpage(),pageDto.getSize(),goodMapper.countGoodDtoListBySearch(val),goodMapper.getGoodDtoListBySearch(val,(pageDto.getCurrentpage() - 1) * pageDto.getSize(),pageDto.getSize()));
+        return page;
     }
 
     @Override
-    public List<GoodDto> getGoodDtoList() {
-        return goodMapper.getGoodDtoList();
+    public Page getGoodDtoListByCata(Integer pri,Integer sec, @NotNull PageDto pageDto) {
+        new PageDto().pageValid(pageDto);
+        Page page = new Page(pageDto.getCurrentpage(),pageDto.getSize(),goodMapper.countGoodDtoListByCata(pri,sec),goodMapper.getGoodDtoListByCata(pri,sec,(pageDto.getCurrentpage() - 1) * pageDto.getSize(),pageDto.getSize()));
+        return page;
     }
 
 
@@ -141,13 +153,13 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     public Result frozeGoodById(Long gid) {
         Good good = goodMapper.selectByGidForUpdate(gid);
         if (good.getStatus().equals(GOOD_FROZEN))
-            return Result.fail(406,"商品冻结中",null);
+            return Result.fail(406, "商品冻结中", null);
 
         if (good.getStatus().equals(GOOD_SELLOUT))
-            return Result.fail(406,"商品下架中",null);
+            return Result.fail(406, "商品下架中", null);
 
-        UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid",gid).set("status",GOOD_FROZEN);
-        goodMapper.update(null,updateWrapper);
+        UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid", gid).set("status", GOOD_FROZEN);
+        goodMapper.update(null, updateWrapper);
         redisTemplate.delete(String.valueOf(gid));
         return Result.success(gid);
     }
@@ -156,12 +168,12 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     public Result unFrozenGood(Long gid) {
         Good good = goodMapper.selectByGidForUpdate(gid);
         if (good.getStatus() == 0)
-            return Result.fail(406,"商品解冻中",null);
+            return Result.fail(406, "商品解冻中", null);
         if (good.getStatus() == 2)
-            return Result.fail(406,"商品下架中",null);
+            return Result.fail(406, "商品下架中", null);
         good.setStatus(GOOD_SALE);
-        UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid",gid);
-        goodMapper.update(good,updateWrapper);
+        UpdateWrapper<Good> updateWrapper = new UpdateWrapper<Good>().eq("gid", gid);
+        goodMapper.update(good, updateWrapper);
         redisTemplate.delete(String.valueOf(gid));
         return Result.success(gid);
     }

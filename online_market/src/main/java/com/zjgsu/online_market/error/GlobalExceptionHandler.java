@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = RuntimeException .class)
     public Result handler(RuntimeException e)
     {
-        log.error("运行时异常",e);
+        log.error("运行时异常 :  "+e.getMessage());
         return Result.fail(400,e.getMessage(),600);
     }
 
@@ -66,6 +66,7 @@ public class GlobalExceptionHandler {
         Objects.requireNonNull(bindingResult);
         return Result.fail(400, Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage(),604);
     }
+
 
     @ExceptionHandler(value = IOException.class)
     public Result handler(IOException e)

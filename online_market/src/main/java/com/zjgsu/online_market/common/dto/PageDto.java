@@ -15,5 +15,14 @@ public class PageDto {
     @Digits(integer = 9, fraction = 0)
     private Integer size;
 
-
+    public boolean pageValid(PageDto pageDto)
+    {
+        if (pageDto.getSize() == null || pageDto.getCurrentpage() == null) {
+            throw new RuntimeException("page error");
+        }
+        if ((pageDto.getCurrentpage() - 1) * pageDto.getSize() < 0) {
+            throw new RuntimeException("page error");
+        }
+        return true;
+    }
 }
