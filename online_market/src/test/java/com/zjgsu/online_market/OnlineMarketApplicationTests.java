@@ -15,6 +15,5 @@ class OnlineMarketApplicationTests {
     OrdersMapper ordersMapper;
     @Test
     void contextLoads() {
-
     }
 }

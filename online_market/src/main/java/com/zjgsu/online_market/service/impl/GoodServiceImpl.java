@@ -148,7 +148,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
                 .filter(good -> (String.valueOf(good.get("description")).matches(".*"+val+".*") || String.valueOf(good.get("gname")).matches(".*"+val+".*")))
                 .collect(Collectors.toList());
         ArrayList<HashMap<String,Object>> res = new ArrayList<>();
-        for (int i = current; i < origin.size() && i < current + pageDto.getSize() - 1; i++) {
+        for (int i = current; i < origin.size() && i < current + pageDto.getSize(); i++) {
             res.add(origin.get(i));
         }
         Page page = new Page(pageDto.getCurrentpage(), pageDto.getSize(), origin.size(), res);
@@ -177,7 +177,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
                     .collect(Collectors.toList());
         }
         ArrayList<HashMap<String,Object>> res = new ArrayList<>();
-        for (int i = current; i < origin.size() && i < current + pageDto.getSize() - 1; i++) {
+        for (int i = current; i < origin.size() && i < current + pageDto.getSize(); i++) {
             res.add(origin.get(i));
         }
         Page page = new Page(pageDto.getCurrentpage(), pageDto.getSize(), origin.size(), res);
