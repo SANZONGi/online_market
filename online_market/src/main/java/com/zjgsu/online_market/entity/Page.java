@@ -10,20 +10,20 @@ public class Page {
     public Page() {
     }
 
-    public Page(Long current, Integer size) {
+    public Page(Integer current, Integer size) {
         this.current = current;
         this.size = size;
     }
 
-    public Page(Long current, Integer size, Long total, List<HashMap<String,Object>> data) {
+    public Page(Integer current, Integer size, Integer total, List<HashMap<String,Object>> data) {
         this.current = current;
         this.size = size;
         this.total = total;
         this.data = data;
     }
 
-    Long current;
+    Integer current;
     Integer size;
-    Long total;
+    Integer total;
     List<HashMap<String, Object>> data;
 }

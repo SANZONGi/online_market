@@ -20,7 +20,7 @@ public interface IOrdersService extends IService<Orders> {
 
     Integer insertOrders(Orders orders);
 
-    Page getOrdersAndUsersPageWithStatus(@Min(1) Long current, @Min(1) Integer size, Long uid, List<Integer> status);
+    Page getOrdersAndUsersPageWithStatus(@Min(1) Integer current, @Min(1) Integer size, Long uid, List<Integer> status);
 
     Integer successById(Long oid, Long gid);
 

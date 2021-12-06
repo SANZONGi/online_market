@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
@@ -65,23 +66,23 @@ public class GoodController {
 
     @ApiOperation("根据搜索获取商品(搜索栏)")
     @GetMapping("/good/search")
-    public Result getGoodBySearch(@NotNull(message = "空参数") @NotBlank(message = "空参数") String val,@NotNull PageDto pageDto) {
-        return Result.success(goodService.getGoodDtoListBySearch(val,pageDto));
+    public Result getGoodBySearch(@NotNull(message = "空参数") @NotBlank(message = "空参数") String val, @NotNull PageDto pageDto,@RequestParam("status") @NotNull @NotEmpty List<Integer> status) {
+        return Result.success(goodService.getGoodDtoListBySearch(val,pageDto,status));
     }
 
 
     @ApiOperation("根据一级类别搜索")
     @GetMapping("/good/catalogue/{pri}")
-    public Result getGoodByPri(@PathVariable @NotNull(message = "空参数") Integer pri,@NotNull PageDto pageDto) {
+    public Result getGoodByPri(@PathVariable @NotNull(message = "空参数") Integer pri,@NotNull PageDto pageDto,@RequestParam("status") @NotNull @NotEmpty List<Integer> status) {
         new PageDto().pageValid(pageDto);
-        return Result.success(goodService.getGoodDtoListByCata(pri,null,pageDto));
+        return Result.success(goodService.getGoodDtoListByCata(pri,null,pageDto,status));
     }
 
     @ApiOperation("根据二级类别搜索")
     @GetMapping("/good/catalogue/{pri}/{sec}")
-    public Result getGoodBySec(@PathVariable @NotNull Integer pri, @PathVariable @NotNull Integer sec,@NotNull PageDto pageDto) {
+    public Result getGoodBySec(@PathVariable @NotNull Integer pri, @PathVariable @NotNull Integer sec,@NotNull PageDto pageDto,@RequestParam("status") @NotNull @NotEmpty List<Integer> status) {
         new PageDto().pageValid(pageDto);
-        return Result.success(goodService.getGoodDtoListByCata(pri,sec,pageDto));
+        return Result.success(goodService.getGoodDtoListByCata(pri,sec,pageDto,status));
     }
 
     @ApiOperation("是否存在未下架商品")

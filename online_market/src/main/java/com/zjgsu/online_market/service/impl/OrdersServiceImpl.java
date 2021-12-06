@@ -69,7 +69,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         return 0;
     }
 
-    public Page getOrdersAndUsersPageWithStatus(Long current, Integer size, Long uid, List<Integer> status) {
+    public Page getOrdersAndUsersPageWithStatus(Integer current, Integer size, Long uid, List<Integer> status) {
         Page page = new Page();
         page.setTotal(ordersMapper.countOrdersAndUsersPageWithStatus(uid, status));
         if (current != null && size != null) {
@@ -78,7 +78,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
             page.setSize(size);
             current = (current - 1) * size;
         } else {
-            page.setCurrent(1L);
+            page.setCurrent(1);
             page.setSize((int) (page.getTotal() + 1));
         }
         page.setData(ordersMapper.getOrdersAndUsersPageWithStatus(current, size, uid, status));

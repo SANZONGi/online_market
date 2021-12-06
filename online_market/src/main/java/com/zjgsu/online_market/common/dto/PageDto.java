@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 public class PageDto {
     @NotNull(message = "当前页id不能为空")
     @Digits(integer = 9, fraction = 0)
-    private Long currentpage;
+    private Integer currentpage;
 
     @NotNull(message = "页大小不能为空")
     @Digits(integer = 9, fraction = 0)

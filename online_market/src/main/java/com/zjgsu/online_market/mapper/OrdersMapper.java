@@ -38,7 +38,7 @@ public interface OrdersMapper extends BaseMapper<Orders> {
             "            LIMIT #{current}, #{size}\n" +
             "        </if>"+
             "</script>")
-    List<HashMap<String, Object>> getOrdersAndUsersPageWithStatus(Long current, Integer size, Long uid, List<Integer> status);
+    List<HashMap<String, Object>> getOrdersAndUsersPageWithStatus(Integer current, Integer size, Long uid, List<Integer> status);
 
 
     @Select("<script>" +
@@ -52,5 +52,5 @@ public interface OrdersMapper extends BaseMapper<Orders> {
             "            and orders.uid = #{uid}\n" +
             "        </if>\n" +
             "</script>")
-    Long countOrdersAndUsersPageWithStatus(Long uid, List<Integer> status);
+    Integer countOrdersAndUsersPageWithStatus(Long uid, List<Integer> status);
 }

@@ -7,6 +7,7 @@ import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.entity.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
@@ -43,8 +44,8 @@ public interface IGoodService extends IService<Good> {
     Page getGoodDtoListByStatus(List<Integer> status, @NotNull PageDto pageDto);
 
 
-    Page getGoodDtoListBySearch(String val, @NotNull PageDto pageDto);
+    Page getGoodDtoListBySearch(String val, @NotNull PageDto pageDto, @NotNull @NotEmpty List<Integer> status);
 
-    Page getGoodDtoListByCata(Integer pri,Integer sec, @NotNull PageDto pageDto);
+    Page getGoodDtoListByCata(Integer pri,Integer sec, @NotNull PageDto pageDto,@NotNull @NotEmpty List<Integer> status);
 
 }

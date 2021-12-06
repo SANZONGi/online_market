@@ -22,11 +22,15 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -128,23 +132,55 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     @Override
     public Page getGoodDtoListByStatus(List<Integer> status, @NotNull PageDto pageDto) {
         new PageDto().pageValid(pageDto);
-        Page page = new Page(pageDto.getCurrentpage(),pageDto.getSize(),goodMapper.countGoodDtoListByStatus(status),goodMapper.getGoodDtoListByStatus(status,(pageDto.getCurrentpage() - 1) * pageDto.getSize(),pageDto.getSize()));
+        Page page = new Page(pageDto.getCurrentpage(), pageDto.getSize(), goodMapper.countGoodDtoListByStatus(status), goodMapper.getGoodDtoListByStatus(status, (pageDto.getCurrentpage() - 1) * pageDto.getSize(), pageDto.getSize()));
         return page;
     }
 
 
     @Override
-    public Page getGoodDtoListBySearch(String val, @NotNull PageDto pageDto) {
-        val = '%' + val + '%';
+    public Page getGoodDtoListBySearch(String val, @NotNull PageDto pageDto, @NotNull @NotEmpty List<Integer> status) {
         new PageDto().pageValid(pageDto);
-        Page page = new Page(pageDto.getCurrentpage(),pageDto.getSize(),goodMapper.countGoodDtoListBySearch(val),goodMapper.getGoodDtoListBySearch(val,(pageDto.getCurrentpage() - 1) * pageDto.getSize(),pageDto.getSize()));
+        Integer current = (pageDto.getCurrentpage() - 1) * pageDto.getSize();
+        List<HashMap<String,Object>> origin = goodMapper.getAllGoodDtoList()
+                .stream()
+                .filter(good -> status.contains((Integer) good.get("status")))
+                .filter(good -> (good.get("description") != null && good.get("gname") != null))
+                .filter(good -> (String.valueOf(good.get("description")).matches(".*"+val+".*") || String.valueOf(good.get("gname")).matches(".*"+val+".*")))
+                .collect(Collectors.toList());
+        ArrayList<HashMap<String,Object>> res = new ArrayList<>();
+        for (int i = current; i < origin.size() && i < current + pageDto.getSize() - 1; i++) {
+            res.add(origin.get(i));
+        }
+        Page page = new Page(pageDto.getCurrentpage(), pageDto.getSize(), origin.size(), res);
         return page;
     }
 
     @Override
-    public Page getGoodDtoListByCata(Integer pri,Integer sec, @NotNull PageDto pageDto) {
+    public Page getGoodDtoListByCata(Integer pri, Integer sec, @NotNull PageDto pageDto,@NotNull @NotEmpty List<Integer> status) {
         new PageDto().pageValid(pageDto);
-        Page page = new Page(pageDto.getCurrentpage(),pageDto.getSize(),goodMapper.countGoodDtoListByCata(pri,sec),goodMapper.getGoodDtoListByCata(pri,sec,(pageDto.getCurrentpage() - 1) * pageDto.getSize(),pageDto.getSize()));
+        Integer current = (pageDto.getCurrentpage() - 1) * pageDto.getSize();
+        List<HashMap<String,Object>> origin = goodMapper.getAllGoodDtoList()
+                .stream()
+                .filter(good -> status.contains((Integer) good.get("status")))
+                .collect(Collectors.toList());
+        if (pri != null){
+            origin = origin
+                    .stream()
+                    .filter(good -> good.get("pri_cata").equals(pri))
+                    .collect(Collectors.toList());
+        }
+        if (sec != null && pri != null)
+        {
+            origin = origin
+                    .stream()
+                    .filter(good -> good.get("sec_cata").equals(sec))
+                    .collect(Collectors.toList());
+        }
+        ArrayList<HashMap<String,Object>> res = new ArrayList<>();
+        for (int i = current; i < origin.size() && i < current + pageDto.getSize() - 1; i++) {
+            res.add(origin.get(i));
+        }
+        Page page = new Page(pageDto.getCurrentpage(), pageDto.getSize(), origin.size(), res);
         return page;
     }
 
