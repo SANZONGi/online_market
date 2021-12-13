@@ -111,7 +111,7 @@ export default {
             method:"post",
             url:"/users/"+this.$store.getters.getUser.uid,
             data:data
-          }).then(res=>{
+          }).then(res =>{
             console.log(res)
             this.$message({
               type:"success",
