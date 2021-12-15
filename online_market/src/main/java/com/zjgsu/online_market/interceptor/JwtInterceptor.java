@@ -8,7 +8,6 @@ import com.zjgsu.online_market.common.utils.JwtUtils;
 import com.zjgsu.online_market.entity.Users;
 import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -24,9 +23,12 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class JWTInterceptor implements HandlerInterceptor {
-    @Autowired
-    private JwtUtils jwtUtils;
+public class JwtInterceptor implements HandlerInterceptor {
+    private final JwtUtils jwtUtils;
+
+    public JwtInterceptor(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

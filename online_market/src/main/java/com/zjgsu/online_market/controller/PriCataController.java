@@ -5,6 +5,8 @@ import com.zjgsu.online_market.entity.PriCata;
 import com.zjgsu.online_market.entity.SecCata;
 import com.zjgsu.online_market.service.IPriCataService;
 import com.zjgsu.online_market.service.ISecCataService;
+import com.zjgsu.online_market.service.impl.PriCataServiceImpl;
+import com.zjgsu.online_market.service.impl.SecCataServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +20,23 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author SANZONG
+ */
 @RestController
 @RequestMapping("/v2.0")
 public class PriCataController {
-    @Autowired
     private IPriCataService priCataService;
+    private ISecCataService secCataService;
 
     @Autowired
-    private ISecCataService secCataService;
+    public void setPriCataService(PriCataServiceImpl priCataService){
+        this.priCataService = priCataService;
+    }
+    @Autowired
+    public void setSecCataService(SecCataServiceImpl secCataService){
+        this.secCataService = secCataService;
+    }
 
     @ApiOperation("获取一级目录")
     @GetMapping("/pri")

@@ -50,7 +50,9 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
 
     public Integer checkPasswordStrength(String pwd) {
         int strength;
-        if (pwd == null) return 0;
+        if (pwd == null) {
+            return 0;
+        }
         pwd = pwd.trim();
         strength = pwd.length() >= 9?1:0;
         if (pwd.matches(".*[A-Z].*") || pwd.matches(".*[a-z].*")) {
@@ -59,8 +61,12 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         return strength;
     }
 
+    @Override
     public Users getUserByUsername(String username) {
-        if (redisTemplate.hasKey(username)) {     //redis中有记录，200s
+        /**
+         * redis中有记录，200s
+         */
+        if (redisTemplate.hasKey(username)) {
             return (Users) redisTemplate.opsForValue().get(username);
         } else {
             Users users = usersMapper.getUserByUsername(username);
@@ -69,8 +75,9 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         }
     }
 
+    @Override
     public Users getUserByUid(String uid) {
-        if (redisTemplate.hasKey(uid)) {     //redis中有记录，200s
+        if (redisTemplate.hasKey(uid)) {
             return (Users) redisTemplate.opsForValue().get(uid);
         } else {
             Users users = usersMapper.selectById(uid);
@@ -79,6 +86,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         }
     }
 
+    @Override
     @Transactional
     public Integer insertUser(Users users) {
         if (usersMapper.getUserByUsername(users.getUsername()) != null) {
@@ -100,18 +108,21 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         }
     }
 
+    @Override
     public List<Users> getAllUsers()
     {
         return usersMapper.getAllUsers();
     }
 
-    public Integer updateUser(Long uid,Users users) {
+    @Override
+    public Integer updateUser(Long uid, Users users) {
         users.setPassword(null);
         users.setUsername(null);
         users.setUid(null);
         return usersMapper.update(users,new UpdateWrapper<Users>().eq("uid",uid));
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Object checkUser(HttpServletRequest request, LoginDto loginDto) {
         Users users = getUserByUsername(loginDto.getUsername());
@@ -123,7 +134,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             return Result.fail("用户权限出错，请联系管理员", 3);
         }
         if (encypterUtil.Decrypt(users.getPassword()).equals(loginDto.getPwd())) {
-            Map<String, String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>(2);
             map.put("uid", users.getUid().toString());
             map.put("username", users.getUsername());
             String token = jwtUtils.generateToken(map);
@@ -136,6 +147,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         }
     }
 
+    @Override
     @Transactional
     public Result changePassword(String password, String oldpassword, Long uid) {
         Users users = getUserByUid(uid.toString());

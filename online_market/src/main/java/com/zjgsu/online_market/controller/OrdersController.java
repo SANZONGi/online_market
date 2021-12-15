@@ -33,8 +33,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/v2.0")
 public class OrdersController {
-    @Autowired
+
     private IOrdersService ordersService;
+
+    @Autowired
+    public void setOrdersService(OrdersServiceImpl ordersService){
+        this.ordersService = ordersService;
+    }
 
     @ApiOperation("创建订单")
     @LoginRequired(required = true)

@@ -5,6 +5,9 @@ import com.zjgsu.online_market.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author SANZONG
+ */
 @Mapper
 @Repository
 public interface RoleMapper extends BaseMapper<Role> {

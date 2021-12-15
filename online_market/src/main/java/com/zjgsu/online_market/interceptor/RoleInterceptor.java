@@ -5,7 +5,6 @@ import com.zjgsu.online_market.common.annotations.RoleRequired;
 import com.zjgsu.online_market.entity.Role;
 import com.zjgsu.online_market.service.impl.RoleServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,11 +16,18 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author SANZONG
+ */
 @Component
 @Slf4j
 public class RoleInterceptor implements HandlerInterceptor {
-    @Autowired
-    private HttpSession httpSession;
+    private final HttpSession httpSession;
+
+    public RoleInterceptor(HttpSession httpSession) {
+        this.httpSession = httpSession;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         response.setContentType("application/json;charset=UTF-8");

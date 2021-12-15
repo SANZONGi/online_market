@@ -62,6 +62,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     @Autowired
     private OrdersMapper ordersMapper;
 
+    @Override
     public Good getGoodById(Long id) {
         Good good = (Good) redisTemplate.opsForValue().get(String.valueOf(id));
         if (good == null) {
@@ -72,6 +73,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
 
     }
 
+    @Override
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public List<Good> getFrozenGood() {
         if (ordersMapper.selectCount(new QueryWrapper<Orders>().eq("status", GOOD_FROZEN)) == 0) { //没有订单激活
@@ -86,6 +88,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     }
 
 
+    @Override
     @Transactional
     public Integer publish(Good good, List<MultipartFile> files) throws IOException {
         String realpath;
@@ -116,12 +119,14 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
         return 0;
     }
 
+    @Override
     @Deprecated
     public List<Good> getGoodByPri(@NotNull Integer pri) {
         QueryWrapper<Good> queryWrapper = new QueryWrapper<Good>().eq("pri_cata", pri);
         return goodMapper.selectList(queryWrapper);
     }
 
+    @Override
     @Deprecated
     public List<Good> getGoodBySec(@NotNull Integer pri, @NotNull Integer sec) {
         QueryWrapper<Good> queryWrapper = new QueryWrapper<Good>().eq("pri_cata", pri).eq("sec_cata", sec);
@@ -185,6 +190,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
     }
 
 
+    @Override
     @Transactional
     public Result frozeGoodById(Long gid) {
         Good good = goodMapper.selectByGidForUpdate(gid);
@@ -200,6 +206,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodMapper, Good> implements IG
         return Result.success(gid);
     }
 
+    @Override
     @Transactional
     public Result unFrozenGood(Long gid) {
         Good good = goodMapper.selectByGidForUpdate(gid);

@@ -1,6 +1,6 @@
 package com.zjgsu.online_market.config;
 
-import com.zjgsu.online_market.interceptor.JWTInterceptor;
+import com.zjgsu.online_market.interceptor.JwtInterceptor;
 import com.zjgsu.online_market.interceptor.RoleInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +21,14 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Value("${xjj.imgfilepath}")
     private String LocalImgPath;
     @Autowired
-    private JWTInterceptor jwtInterceptor;
+    private JwtInterceptor jwtInterceptor;
     @Autowired
     private RoleInterceptor roleInterceptor;
 
 
-//    jwt拦截
+    /**
+     * jwt拦截
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor).addPathPatterns("/**");

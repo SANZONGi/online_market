@@ -9,6 +9,7 @@ import com.zjgsu.online_market.common.dto.PageDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Good;
 import com.zjgsu.online_market.service.IGoodService;
+import com.zjgsu.online_market.service.impl.GoodServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -35,8 +36,12 @@ import java.util.List;
 @RequestMapping("/v2.0")
 public class GoodController {
 
-    @Autowired
     private IGoodService goodService;
+
+    @Autowired
+    public void setGoodService(GoodServiceImpl goodService){
+        this.goodService = goodService;
+    }
 
     @ApiOperation("全部未下架商品")
     @GetMapping("/good")

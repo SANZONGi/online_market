@@ -7,6 +7,7 @@ import com.zjgsu.online_market.common.dto.LoginDto;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.Users;
 import com.zjgsu.online_market.service.IUsersService;
+import com.zjgsu.online_market.service.impl.UsersServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,12 @@ import javax.validation.constraints.NotNull;
 @RestController
 @RequestMapping("/v2.0")
 public class UsersController {
+    private IUsersService usersService;
 
     @Autowired
-    private IUsersService usersService;
+    public void setUsersService(UsersServiceImpl usersService){
+        this.usersService = usersService;
+    }
 
     @ApiOperation("检查用户")
     @PostMapping("/users/check")
@@ -42,19 +46,24 @@ public class UsersController {
     @LoginRequired(required = true)
     @PostMapping("/users/{id}")
     public Result updateUser(@PathVariable @NotNull Long id,@RequestBody @NotNull Users users) {
-        if (users.getPhone() == null || !users.getPhone().matches("[0-9]{11}"))
+        String phoneNumberRegex = "[0-9]{11}";
+        if (users.getPhone() == null || !users.getPhone().matches(phoneNumberRegex))
         {
             return Result.fail("电话格式错误或空",1);
         }
-        if (users.getAddress() == null || users.getAddress().equals(""))
+        if (users.getAddress() == null || "".equals(users.getAddress()))
         {
             return Result.fail("地址格式错误或空",2);
         }
         int res = usersService.updateUser(id,users);
         if (res == 0)
+        {
             return Result.fail("用户不存在");
+        }
         else
+        {
             return Result.success("ok");
+        }
     }
 
     @ApiOperation("注册用户")
