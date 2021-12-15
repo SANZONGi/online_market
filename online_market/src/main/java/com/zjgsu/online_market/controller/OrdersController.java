@@ -53,12 +53,16 @@ public class OrdersController {
     public Result getOrders(PageDto pageDto, @Min(1) Long uid, @RequestParam(value = "status", required = false) List<Integer> status) {
         if (pageDto.getCurrentpage() != null || pageDto.getSize() != null) {
             if (pageDto.getCurrentpage() == null || pageDto.getSize() == null)
+            {
                 return Result.fail("分页参数不全", 1);
+            }
         }
         if (status != null) {
             for (Integer i : status) {
                 if (i > OrdersServiceImpl.ORDER_FAIL || i < OrdersServiceImpl.ORDER_WAITING)
+                {
                     return Result.fail("状态异常", 2);
+                }
             }
             return Result.success(ordersService.
                     getOrdersAndUsersPageWithStatus(pageDto.getCurrentpage(), pageDto.getSize(), uid, status));
@@ -134,9 +138,12 @@ public class OrdersController {
     public Result reject(@PathVariable @NotNull(message = "oid为空") Long oid, @NotNull Long gid) {
         int res = ordersService.rejectById(oid, gid);
         if (res == 1)
+        {
             return Result.fail( "订单错误", res);
-        else if (res == 2)
+        }
+        else if (res == 2) {
             return Result.fail("商品错误", res);
+        }
         return Result.success(oid);
     }
 
