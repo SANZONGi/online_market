@@ -3,9 +3,7 @@ package com.zjgsu.online_market.controller;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.SecCata;
 import com.zjgsu.online_market.service.ISecCataService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -40,10 +39,21 @@ public class SecCataController {
             secCataService.getBaseMapper().insert(new SecCata().setPriId(pri).setName(name));
             return Result.success("ok");
         } catch (Exception e) {
-            log.error("错误原因为   "+e.getCause());
-            return Result.fail(e.getCause().getMessage(),1);
+            log.error("错误原因为   " + e.getCause());
+            return Result.fail(e.getCause().getMessage(), 1);
         }
     }
 
-
+    @ApiOperation("在原有一级目录插入二级目录列表")
+    @PutMapping("/seclist/{pri}")
+    public Result addSecCataList(@PathVariable @NotNull @Min(1) Integer pri, @NotNull @NotBlank List<String> name) {
+        try {
+            for (String item : name) {
+                addSecCata(pri, item);
+            }
+        }catch (Exception e) {
+            return Result.fail(String.valueOf(e.getCause()));
+        }
+        return Result.success("ok");
+    }
 }
