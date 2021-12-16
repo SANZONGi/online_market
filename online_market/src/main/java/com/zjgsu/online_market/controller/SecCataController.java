@@ -1,5 +1,7 @@
 package com.zjgsu.online_market.controller;
 
+import com.zjgsu.online_market.common.annotations.LoginRequired;
+import com.zjgsu.online_market.common.annotations.RoleRequired;
 import com.zjgsu.online_market.common.lang.Result;
 import com.zjgsu.online_market.entity.PriCata;
 import com.zjgsu.online_market.service.IPriCataService;
@@ -86,6 +88,8 @@ public class SecCataController {
         return Result.success("ok");
     }
 
+    @LoginRequired(required = true)
+    @RoleRequired(required = true)
     @ApiOperation("删除一个二级目录项")
     @DeleteMapping("/{pri}/{sec}")
     public Result deleteSecCata(@PathVariable @NotNull Integer pri,@PathVariable @NotNull Integer sec)
