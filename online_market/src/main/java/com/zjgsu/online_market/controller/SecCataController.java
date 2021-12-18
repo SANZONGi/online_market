@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -73,7 +74,7 @@ public class SecCataController {
         return Result.success("ok");
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = SQLException.class)
     @ApiOperation("插入一级目录项和二级目录列表")
     @PutMapping("/seclist")
     public Result addSecCataList(@NotNull @Min(1) String priName,@RequestParam(value = "name") @NotNull @NotBlank List<String> name) {
@@ -82,7 +83,7 @@ public class SecCataController {
             priCata.setName(priName);
             priCataService.insertHasKey(priCata);
             secCataService.addSecList(priCata.getId(),name);
-        }catch (Exception e) {
+        }catch (SQLException e) {
             return Result.fail(String.valueOf(e.getMessage()));
         }
         return Result.success("ok");

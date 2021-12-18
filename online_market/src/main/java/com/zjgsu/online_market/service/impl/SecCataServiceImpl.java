@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 @Service
 public class SecCataServiceImpl extends ServiceImpl<SecCataMapper, SecCata> implements ISecCataService {
@@ -24,20 +25,16 @@ public class SecCataServiceImpl extends ServiceImpl<SecCataMapper, SecCata> impl
         return secCataMapper.getAllInPri(pri);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = SQLException.class)
     @Override
-    public void addSecList(Integer pri, List<String> secCataList) {
-        try {
-            for (String item : secCataList) {
-                addSec(pri, item);
-            }
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
+    public void addSecList(Integer pri, List<String> secCataList) throws SQLException{
+        for (String item : secCataList) {
+            addSec(pri, item);
         }
     }
 
     @Override
-    public void addSec(Integer pri, String name) {
+    public void addSec(Integer pri, String name) throws SQLException{
         secCataMapper.insert(new SecCata().setPriId(pri).setName(name));
     }
 
