@@ -48,6 +48,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         //session检查
         Users users = (Users) request.getSession().getAttribute("user");
+        System.out.println(users);
         if (users == null) {
             log.error("session过期");
             map.put("msg", "session过期" + "\n请重新登录");

@@ -134,7 +134,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             return Result.fail("用户权限出错，请联系管理员", 3);
         }
         if (encypterUtil.Decrypt(users.getPassword()).equals(loginDto.getPwd())) {
-            Map<String, String> map = new HashMap<>(2);
+            Map<String, String> map = new HashMap<>(20);
             map.put("uid", users.getUid().toString());
             map.put("username", users.getUsername());
             String token = jwtUtils.generateToken(map);

@@ -1,16 +1,23 @@
 package com.zjgsu.online_market.controller;
 
+import com.zjgsu.online_market.common.annotations.LoginRequired;
+import com.zjgsu.online_market.common.annotations.RoleRequired;
 import com.zjgsu.online_market.common.lang.Result;
-import com.zjgsu.online_market.entity.SecCata;
+import com.zjgsu.online_market.entity.PriCata;
+import com.zjgsu.online_market.service.IPriCataService;
 import com.zjgsu.online_market.service.ISecCataService;
+import com.zjgsu.online_market.service.impl.PriCataServiceImpl;
+import com.zjgsu.online_market.service.impl.SecCataServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -20,8 +27,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/v2.0")
 public class SecCataController {
-    @Autowired
     private ISecCataService secCataService;
+    private IPriCataService priCataService;
+
+    @Autowired
+    public void setSecCataService(SecCataServiceImpl secCataService){
+        this.secCataService = secCataService;
+    }
+    @Autowired
+    public void setPriCataService(PriCataServiceImpl priCataService){
+        this.priCataService = priCataService;
+    }
 
     @ApiOperation("获取全部二级目录")
     @GetMapping("/sec")
@@ -39,7 +55,7 @@ public class SecCataController {
     @PutMapping("/sec/{pri}")
     public Result addSecCata(@PathVariable @NotNull @Min(1) Integer pri, @NotNull @NotBlank String name) {
         try {
-            secCataService.getBaseMapper().insert(new SecCata().setPriId(pri).setName(name));
+            secCataService.addSec(pri,name);
             return Result.success("ok");
         } catch (Exception e) {
             log.error("错误原因为   " + e.getCause());
@@ -48,15 +64,43 @@ public class SecCataController {
     }
 
     @ApiOperation("在原有一级目录插入二级目录列表")
-    @PutMapping("/seclist/{pri}")
-    public Result addSecCataList(@PathVariable @NotNull @Min(1) Integer pri, @NotNull @NotBlank List<String> name) {
+    @PutMapping("/{pri}/seclist/")
+    public Result addSecCataList(@PathVariable @NotNull @Min(1) Integer pri,@RequestParam(value = "name") @NotNull @NotBlank List<String> name) {
         try {
-            for (String item : name) {
-                addSecCata(pri, item);
-            }
+            secCataService.addSecList(pri,name);
         }catch (Exception e) {
             return Result.fail(String.valueOf(e.getCause()));
         }
         return Result.success("ok");
     }
+
+    @Transactional(rollbackFor = SQLException.class)
+    @ApiOperation("插入一级目录项和二级目录列表")
+    @PutMapping("/seclist")
+    public Result addSecCataList(@NotNull @Min(1) String priName,@RequestParam(value = "name") @NotNull @NotBlank List<String> name) {
+        try {
+            PriCata priCata = new PriCata();
+            priCata.setName(priName);
+            priCataService.insertHasKey(priCata);
+            secCataService.addSecList(priCata.getId(),name);
+        }catch (SQLException e) {
+            return Result.fail(String.valueOf(e.getMessage()));
+        }
+        return Result.success("ok");
+    }
+
+    @LoginRequired(required = true)
+    @RoleRequired(required = true)
+    @ApiOperation("删除一个二级目录项")
+    @DeleteMapping("/{pri}/{sec}")
+    public Result deleteSecCata(@PathVariable @NotNull Integer pri,@PathVariable @NotNull Integer sec)
+    {
+        int rtValue = 1;
+        int res = secCataService.deleteSec(pri,sec);
+        if (res != rtValue) {
+            return Result.fail("没有此项或程序出现异常");
+        }
+        return Result.success("ok");
+    }
+
 }
