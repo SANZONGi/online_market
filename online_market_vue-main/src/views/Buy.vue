@@ -1,46 +1,33 @@
 <template>
   <el-container>
     <el-header>
-      <Userdetail></Userdetail>
-    </el-header>
-<!--    <el-container>-->
-<!--      <el-aside width="400px">-->
-<!--        <div class="block">-->
-<!--          <el-image-->
-<!--              style="width: 300px; height: 300px"-->
-<!--              :src="this.good['image']"-->
-<!--              fit="fill"></el-image>-->
-<!--        </div>-->
-<!--      </el-aside>-->
-<!--      <el-main>-->
+      <div>
+        <!--主页标签栏-->
+        <div class="div1">
+          <el-tabs v-model="activeName" @tab-click="handleClick" stretch="false">
+            <el-tab-pane label="主页" name="first"></el-tab-pane>
+            <el-tab-pane label="" name="second"></el-tab-pane>
+            <el-tab-pane label="" name="third"></el-tab-pane>
+            <el-tab-pane label="" name="fourth"></el-tab-pane>
+          </el-tabs>
+        </div>
+        <!--搜索框-->
+        <div class="div2">
 
-<!--        <el-form ref="ruleForm" :model="ruleForm" status-icon :rules="rules" label-width="100px" class="des">-->
-<!--          <el-form-item label="商品名称: ">-->
-<!--            <el-label-wrap>{{ this.good['gname'] }}</el-label-wrap>-->
-<!--          </el-form-item>-->
-<!--          <el-form-item label="商品价格: ">-->
-<!--            <el-label-wrap>{{ this.good['price'] }}</el-label-wrap>-->
-<!--          </el-form-item>-->
-<!--          <el-form-item label="收件人姓名: " prop="name">-->
-<!--            <el-input v-model="ruleForm.name" auto-complete="off"></el-input>-->
-<!--          </el-form-item>-->
-<!--          <el-form-item label="收件人电话: " prop="phone">-->
-<!--            <el-input v-model="ruleForm.phone" auto-complete="off"></el-input>-->
-<!--          </el-form-item>-->
-<!--          <el-form-item label="收件人地址: " prop="address">-->
-<!--            <el-input v-model="ruleForm.address" auto-complete="off"></el-input>-->
-<!--          </el-form-item>-->
-<!--          <el-form-item>-->
-<!--            <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>-->
-<!--            <el-button>取消</el-button>-->
-<!--          </el-form-item>-->
-<!--        </el-form>-->
-<!--      </el-main>-->
-<!--    </el-container>-->
+        </div>
+
+        <!--登录按钮-->
+        <div class="div3">
+          <el-button type="primary" @click="login" icon="el-icon-user" circle></el-button>
+          <el-button type="success" icon="el-icon-refresh" @click="refresh" circle></el-button>
+        </div>
+      </div>
+    </el-header>
       <h2>确认订单信息</h2>
-      <span>默认交易地址:</span>
+<!--      <span>默认交易地址:</span>-->
     <el-container>
       <el-main>
+
         <div class="label" style="margin-top: 10px">
         <div style="display: inline;width: 150px;text-align: center">商品名称</div>
         <div style="display: inline;width: 150px;text-align: center;margin-left: 150px">单价</div>
@@ -49,15 +36,18 @@
         <div style="display: inline;width: 150px;text-align: center;margin-left: 150px">总价</div>
           <el-divider></el-divider>
         </div>
-        <div class="label2" style="margin-top: 10px">
-          <div style="display: inline;text-align: center;">{{ this.good['gname'] }}</div>
-          <div style="display: inline;text-align: center;margin-left: 220px">{{ this.good['price'] }}</div>
-          <div style="display: inline;text-align: center;margin-left: 160px">{{ this.good['stock'] }}</div>
-          <div style="display: inline;text-align: center;margin-left: 160px">
-            <el-input-number v-model="num" :min="1"  :max="this.good['stock']"  label="描述文字" size="small">12</el-input-number>
+
+        <div class="label4" style="display: inline-block;">
+          <div style="width: 150px;display: inline;">{{ this.good['gname'] }}</div>
+          <div style="width: 150px;margin-left: 170px;display: inline;">{{ this.good['price'] }}</div>
+          <div style="width: 150px;margin-left: 170px;display: inline;">{{ this.good['stock'] }}</div>
+          <div style="width: 150px;margin-left: 170px;display: inline;">
+            <el-input-number v-model="num" :min="1"  :max="this.good['stock']"  size="small"></el-input-number>
           </div>
-          <div style="display: inline;text-align: center;margin-left: 110px">{{ this.num * this.good['price'] }}</div>
+          <div style="width: 150px;margin-left: 100px;display: inline;">{{ this.num * this.good['price'] }}</div>
         </div>
+
+
         <div style="float: right;margin-top: 150px">
           <div style="margin-right: 0px">实付款:</div>
           <h2>{{ this.num * this.good['price'] }} ￥</h2>
@@ -77,11 +67,29 @@ export default {
   components: {Userdetail},
   data() {
     return {
+      activeName:'first',
       num:1,
       good: {},
-      // total:this.num * this.good['price']
+      nowrole:'',
+      gooddetail:[{
+        gname:'',
+        price:0,
+        stock:0,
+        total:0
+      }]
+      // gooddetail:{
+      //   gname:'',
+      //   price:'',
+      //   stock: 0,
+      //   number:0,
+      //   total:0
+      // }
     }
   }, methods: {
+    handleClick(){
+      if (this.activeName==='first')
+        this.$router.push({name:'Home'})
+    },
     submitForm() {
       let data = new FormData
       var total = this.num * this.good['price']
@@ -145,15 +153,25 @@ export default {
       //   }
       // })
     },
-
+    login(){
+      if (this.nowrole === '0' ){
+        this.$router.push("Userhome")
+      }else{
+        this.$router.push("Custhistory")
+      }
+      console.log(this.nowrole)
+    },
   },created() {
     this.good = this.$route.params['good']
     if (this.good === undefined)
       this.good = localStorage.getItem('good')
     else
       localStorage.setItem('good', this.good)
-    // console.log(this.good)
-    console.log(this.$store.getters.getUser.uid)
+    this.nowrole = localStorage.getItem("role")
+    this.gooddetail[0].gname = this.good['gname']
+    this.gooddetail[0].price = this.good['price']
+    this.gooddetail[0].stock = this.good['stock']
+    console.log(this.good['stock'])
   }
 }
 </script>
@@ -172,5 +190,31 @@ export default {
 }
 span{
   float: left;
+}
+.detail{
+  margin-left: 150px;
+}
+.div1 {
+  float: left;
+  /*width: auto;*/
+  width: 40%;
+  height: 60px;
+
+}
+
+.div2 {
+  margin-left: 70px;
+  float: left;
+  width: 35%;
+  height: 60px;
+}
+
+.div3 {
+  margin-left: 30px;
+  float: right;
+  align-content: center;
+  /*width: auto;*/
+  width: 10%;
+  height: 60px;
 }
 </style>

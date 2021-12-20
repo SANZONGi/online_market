@@ -4,7 +4,7 @@
       <Userdetail></Userdetail>
     </el-header>
     <el-container>
-      <el-aside width="180px">
+      <el-aside width="230px">
         <Side></Side>
       </el-aside>
       <el-container>
@@ -56,6 +56,7 @@
                 <i class="el-icon-office-building"></i>
                 状态
               </template>
+              <el-tag v-if="order.status===1" >正在交易</el-tag>
               <el-tag v-if="order.status===2" >交易成功</el-tag>
               <el-tag v-if="order.status===3" type="success">交易失败</el-tag>
             </el-descriptions-item>
@@ -80,7 +81,6 @@
 <script>
 import Userdetail from "@/components/Userdetail";
 import Side from "@/components/Side";
-
 export default {
   name: "Historyorders",
   components: {Side, Userdetail},
@@ -102,10 +102,6 @@ export default {
         this.currentPage = res.data.data.current
         this.total = res.data.data.total
         this.size = res.data.data.size
-        // for (let i = 0; i < this.orderslist.length; i++) {
-        //   //let arr = this.orderslist[i].date
-        //   this.orderslist[i].date = this.orderslist[i].date.replace(/T/g, " ")
-        // }
         console.log(this.orderslist)
       })
     }

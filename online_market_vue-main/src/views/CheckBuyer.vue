@@ -4,7 +4,7 @@
       <Userdetail></Userdetail>
     </el-header>
     <el-container>
-      <el-aside width="180px">
+      <el-aside width="230px">
         <Side></Side>
       </el-aside>
       <el-container v-if="this.orderslist.length!==0">
@@ -123,13 +123,12 @@ export default {
       for (var i =0; i< status.length;i++){
         url += "&status="+status[i]
       }
-      console.log(url)
       this.$axios.get(url).then(res => {
         this.orderslist = res.data.data.data
         this.currentPage = res.data.data.current
         this.total = res.data.data.total
         this.size = res.data.data.size
-        console.log(res)
+        // console.log(res)
       })
 
 
@@ -156,6 +155,13 @@ export default {
         // if (res.data.code !== 200)
         //   console.log(res)
         //   this.$message.warning(res.data.msg);
+        if (res.data.code===400)
+        {
+          this.$message({
+            type:'warning',
+            message:res.data.msg
+          })
+        }
         this.reload()//刷新
         console.log(res)
       })
@@ -176,7 +182,7 @@ export default {
       let data = new FormData;
       data.append("gid",order.gid)
       data.append("oid",order.oid)
-
+      console.log(order.number)
 
       this.$axios({
         data: data,
@@ -186,7 +192,9 @@ export default {
         console.log(res.data)
         if (res.data.code === 406 && res.data.data === 1){
           this.$message.warning(`当前商品已售空`);
-        }else {
+        }else if(res.data.code===400){
+          this.$message.warning(res.data.msg)
+        }else{
           this.$message.success("交易成功");
           this.reload()
         }

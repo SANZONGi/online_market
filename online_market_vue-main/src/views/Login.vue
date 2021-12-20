@@ -1,48 +1,69 @@
 <template>
-  <el-container>
-    <el-header>
-      <div class="div1">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="商品主页" name="first"></el-tab-pane>
-<!--          <el-tab-pane label="&#45;&#45;&#45;&#45;&#45;&#45;" name="second"></el-tab-pane>-->
-<!--          <el-tab-pane label="&#45;&#45;&#45;&#45;&#45;&#45;" name="third"></el-tab-pane>-->
-<!--          <el-tab-pane label="&#45;&#45;&#45;&#45;&#45;&#45;" name="fourth"></el-tab-pane>-->
-        </el-tabs>
-      </div>
-      <div class="div2">
-        <el-input
+<!--  <el-container>-->
+<!--    <el-header>-->
+<!--      <div class="div1">-->
+<!--        <el-tabs v-model="activeName" @tab-click="handleClick">-->
+<!--          <el-tab-pane label="商品主页" name="first"></el-tab-pane>-->
+<!--&lt;!&ndash;          <el-tab-pane label="&#45;&#45;&#45;&#45;&#45;&#45;" name="second"></el-tab-pane>&ndash;&gt;-->
+<!--&lt;!&ndash;          <el-tab-pane label="&#45;&#45;&#45;&#45;&#45;&#45;" name="third"></el-tab-pane>&ndash;&gt;-->
+<!--&lt;!&ndash;          <el-tab-pane label="&#45;&#45;&#45;&#45;&#45;&#45;" name="fourth"></el-tab-pane>&ndash;&gt;-->
+<!--        </el-tabs>-->
+<!--      </div>-->
+<!--      <div class="div2">-->
+<!--        <el-input-->
+<!--          v-model="input4">-->
+<!--          <i slot="suffix" class="el-input__icon el-icon-search"></i>-->
+<!--        </el-input>-->
+<!--      </div>-->
 
-          v-model="input4">
-          <i slot="suffix" class="el-input__icon el-icon-search"></i>
-        </el-input>
-      </div>
+<!--    </el-header>-->
+<!--    <div class="link">-->
+<!--      <router-link :to="{name: 'Login'}">-->
+<!--        登录-->
+<!--      </router-link>-->
+<!--      <el-divider direction="vertical"></el-divider>-->
+<!--      <router-link :to="{name: 'Register'}">-->
+<!--        注册-->
+<!--      </router-link>-->
+<!--    </div>-->
+<!--    <el-container>-->
+<!--      <el-main >-->
+<!--        <el-form :model="form"  status-icon ref="form" label-width="80px" class="form1">-->
+<!--          <el-form-item label="账号" class="item" prop="username">-->
+<!--            <el-input v-model="form.username" style="width: 300px"></el-input>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="密码" class="item" prop="pwd">-->
+<!--            <el-input type="password" v-model="form.pwd" style="width: 300px"></el-input>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item class="item" style="margin-left: 100px">-->
+<!--            <el-button type="primary" @click="onSubmit" class="el-button">登录</el-button>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+<!--      </el-main>-->
+<!--    </el-container>-->
+<!--  </el-container>-->
 
-    </el-header>
-    <div class="link">
-      <router-link :to="{name: 'Login'}">
-        登录
-      </router-link>
-      <el-divider direction="vertical"></el-divider>
-      <router-link :to="{name: 'Register'}">
-        注册
-      </router-link>
+
+  <div class="back">
+    <div class="form">
+      <el-button type="text" icon="el-icon-arrow-left" style="color: black;font-size: 20px;float: left" @click="back">返回</el-button>
+      <h2 style="margin-right:40px">登录</h2>
+      <el-form :model="form"  status-icon ref="form" label-width="20px" >
+        <el-form-item class="item" prop="username">
+          <el-input v-model="form.username" style="width: 250px" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item class="item" prop="pwd">
+          <el-input type="password" v-model="form.pwd" style="width: 250px" placeholder="请输入密码"></el-input>
+        </el-form-item>
+        <el-form-item class="item" style="margin-left: 0">
+          <el-button type="primary" @click="onSubmit" class="el-button">登录</el-button>
+        </el-form-item>
+        <router-link :to="{name: 'Register'}" style="color:black;float: right;margin-right: 20px;margin-top: 20px">
+          注册新账号
+        </router-link>
+      </el-form>
     </div>
-    <el-container>
-      <el-main >
-        <el-form :model="form"  status-icon ref="form" label-width="80px" class="form1">
-          <el-form-item label="账号" class="item" prop="username">
-            <el-input v-model="form.username" style="width: 300px"></el-input>
-          </el-form-item>
-          <el-form-item label="密码" class="item" prop="pwd">
-            <el-input type="password" v-model="form.pwd" style="width: 300px"></el-input>
-          </el-form-item>
-          <el-form-item class="item" style="margin-left: 100px">
-            <el-button type="primary" @click="onSubmit" class="el-button">登录</el-button>
-          </el-form-item>
-        </el-form>
-      </el-main>
-    </el-container>
-  </el-container>
+  </div>
 </template>
 <script>
 export default {
@@ -71,6 +92,9 @@ export default {
     };
   },
   methods: {
+    back(){
+      this.$router.push("Home")
+    },
     handleClick(tab, event) {
       if (this.activeName === 'first') this.$router.push("Home")
       console.log(tab, event);
@@ -122,7 +146,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .div1 {
   float: left;
   width: 450px;
@@ -149,7 +173,6 @@ export default {
 
 .form1 {
   margin: 0px auto;
-
   max-width: 500px;
 }
 
@@ -166,5 +189,23 @@ export default {
   align-content: center;
   max-width: max-content;
 }
-
+.back{
+  background: url("../assets/v.jpg");
+  background-size: 100% 100%;
+  height: 100%;
+  position: fixed;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  text-align: center;
+}
+.form{
+  width: 450px;
+  height: 400px;
+  background-color:rgba(255,255,255,0.3);
+  float: right;
+  margin-top: 200px;
+  margin-right: 550px;
+  border-radius: 15px;
+}
 </style>
