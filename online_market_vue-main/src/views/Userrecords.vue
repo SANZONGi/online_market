@@ -4,7 +4,7 @@
       <Userdetail></Userdetail>
     </el-header>
     <el-container>
-      <el-aside width="180px" >
+      <el-aside width="230px" >
         <Side></Side>
       </el-aside>
     </el-container>

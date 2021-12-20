@@ -4,7 +4,7 @@
       <Userdetail></Userdetail>
     </el-header>
     <el-container>
-      <el-aside width="180px">
+      <el-aside width="230px">
         <Side>
         </Side>
       </el-aside>
@@ -48,8 +48,22 @@ export default {
 
     var validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入新密码'));
+        callback(new Error('请输入密码'));
       } else {
+        var strength = 0
+        if(value.length>=9) strength=1//密码强度必须大于9位且至少包含一种字母
+        function hasLetter(str) {
+          for (var i in str) {
+            var asc = str.charCodeAt(i);
+            if ((asc >= 65 && asc <= 90 || asc >= 97 && asc <= 122)) {
+              return true;
+            }
+          }
+          return false;
+        }
+        if (hasLetter(value)) strength = strength+1
+        if (strength!==2)
+          callback(new Error('密码长度必须大于9位且至少包含一个字母'))
         if (this.ruleForm.checkPass !== '') {
           this.$refs.ruleForm.validateField('checkPass');
         }
@@ -104,13 +118,19 @@ export default {
                 message: "修改成功"
               })
               this.$store.commit("REMOVE_INFO")
-              this.$router.push('Login')
-            }else {
+              this.$router.push({name:'Userhome'})
+            }else if (res.data.code === 401){
               this.$message({
                 type:"warning",
                 message: "修改失败,旧密码输入错误"
               })
+            }else if (res.data.code === 400){
+              this.$message({
+                type:"warning",
+                message: "修改失败,密码强度过低"
+              })
             }
+            console.log(res)
           })
         } else {
           console.log('error submit!!');

@@ -7,6 +7,11 @@ import "element-ui/lib/theme-chalk/index.css"
 import "./axios"
 import axios from "axios";
 import "./guard"
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+Vue.use(VueQuillEditor)
 
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false

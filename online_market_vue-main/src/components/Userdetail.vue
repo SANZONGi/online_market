@@ -9,11 +9,7 @@
         </el-tabs>
       </div>
       <div class="div2">
-        <el-input
-          placeholder=""
-          v-model="input4">
-          <i slot="suffix" class="el-input__icon el-icon-search"></i>
-        </el-input>
+        <span>尊敬的管理员，欢迎您！</span>
       </div>
 <!--      <div class="div3">-->
 <!--        <router-link :to="{name: 'Login'}">-->
@@ -22,7 +18,7 @@
 <!--        </router-link>-->
 <!--      </div>-->
       <div class="div4">
-        <el-button @click="logout">退出登录</el-button>
+        <el-button @click="logout" round type="danger">退出登录</el-button>
       </div>
   </div>
 </template>
@@ -39,7 +35,7 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-      if (this.activeName === 'first') this.$router.push("Home")
+      if (this.activeName === 'first') this.$router.push({name:"Userhome"})
       console.log(tab, event);
     },
     logout(){
@@ -53,7 +49,7 @@ export default {
             message:"成功退出登录"
           })
           this.$store.commit("REMOVE_INFO")
-          this.$router.push("login")
+          this.$router.push("home")
         }else {
           this.$message({
             type:"warning",
@@ -80,6 +76,7 @@ export default {
   float: left;
   width: 30%;
   height: 60px;
+  margin-top: 10px;
 }
 /*.div3 {*/
 /*  margin-right: 30px;*/

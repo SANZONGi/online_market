@@ -20,7 +20,9 @@ const Custhistory = () => import('./views/Custhistory')
 const Changecust = () => import('./views/Changecust')
 const Checkuser = () => import('./views/Checkuser')
 const Userrecords = () => import('./views/Userrecords')
-
+const Classif = () => import('./views/Classif')
+const ChangeClassif =() => import('./views/ChangeClassif')
+const DelClassif =()=> import('./views/DelClassif')
 export default new VueRouter({
     routes: [
         {
@@ -129,7 +131,24 @@ export default new VueRouter({
             name: 'Userrecords',
             component:Userrecords,
             meta: {requireAuth: true}
+        },
+        {
+            path: '/classif',
+            name: 'Classif',
+            component:Classif,
+            meta: {requireAuth: true}
+        },
+        {
+            path: '/changeclassif',
+            name: 'ChangeClassif',
+            component:ChangeClassif,
+            meta: {requireAuth: true}
+        },
+        {
+            path: '/delclassif',
+            name: 'DelClassif',
+            component:DelClassif,
+            meta: {requireAuth: true}
         }
-
     ]
 })

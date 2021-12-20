@@ -5,7 +5,6 @@
         <br>
         <br>
         <el-menu
-            default-active="1"
             class="el-menu-vertical-demo">
           <el-menu-item index="1" @click="custhistory">
             <i class="el-icon-menu"></i>

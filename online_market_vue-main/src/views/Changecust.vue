@@ -2,28 +2,39 @@
 
   <el-container>
     <el-header>
-      <Userdetail></Userdetail>
+      <div>
+        <!--主页标签栏-->
+        <div class="div1">
+          <el-tabs v-model="activeName" @tab-click="handleClick" stretch="false">
+            <el-tab-pane label="主页" name="first"></el-tab-pane>
+            <el-tab-pane label="" name="second"></el-tab-pane>
+            <el-tab-pane label="" name="third"></el-tab-pane>
+            <el-tab-pane label="" name="fourth"></el-tab-pane>
+          </el-tabs>
+        </div>
+        <!--搜索框-->
+        <div class="div2">
+          <span style="font-family: Algerian">尊敬的{{this.$store.getters.getUser.username}}，欢迎</span>
+        </div>
+
+        <!--登录按钮-->
+        <div class="div3">
+
+          <el-button @click="logout" type="danger" round>退出登录</el-button>
+        </div>
+      </div>
     </el-header>
     <el-container>
-      <el-aside width="180px" >
+      <el-aside width="200px" >
         <Custside></Custside>
       </el-aside>
     <el-main>
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="form1">
-      <el-form-item label="用户名" prop="username" class="item">
-        <el-input v-model="ruleForm.username"></el-input>
-      </el-form-item>
       <el-form-item label="电话" prop="phone" class="item">
         <el-input v-model="ruleForm.phone" auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="默认交易地点" prop="address" class="item">
         <el-input v-model="ruleForm.address"></el-input>
-      </el-form-item>
-      <el-form-item label="密码" prop="password" class="item">
-        <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="确认密码" prop="checkPass" class="item">
-        <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item style="margin-left: 100px">
         <el-button type="primary" @click="submitForm('ruleForm')">确认修改</el-button>
@@ -84,7 +95,8 @@ export default {
         password: '',
         checkPass: '',
         phone: '',
-        address: ''
+        address: '',
+        activeName:'first'
       },
       rules:{
         username: [{validator:validateusername,trigger:'blur'}],
@@ -96,6 +108,10 @@ export default {
     }
   },
   methods:{
+    handleClick(tab, event) {
+      if (this.activeName === 'first') this.$router.push("Home")
+      console.log(tab, event);
+    },
     submitForm(formName){
       this.$refs[formName].validate((valid) => {
         if (valid) {//打包数据传送
@@ -109,9 +125,10 @@ export default {
             },
             dataType:'JSON',
             method:"post",
-            url:"/users/"+this.$store.getters.getUser.uid,
+            url:"/v2.0/users/"+this.$store.getters.getUser.uid,
             data:data
-          }).then(res =>{
+          }).then(res=>{
+            console.log("sss")
             console.log(res)
             this.$message({
               type:"success",
@@ -125,6 +142,28 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    logout(){
+      this.$axios({
+        method:"post",
+        url:"/v2.0/users/logout"
+      }).then(res=>{
+        if (res.data.data === 0 ){
+          this.$message({
+            type:"success",
+            message:"成功退出登录"
+          })
+          this.$store.commit("REMOVE_INFO")
+          this.$router.push("login")
+        }else {
+          this.$message({
+            type:"warning",
+            message:res.data.msg
+          })
+          this.$store.commit("REMOVE_INFO")
+          this.$router.push("login")
+        }
+      })
     }
   }
 }
@@ -141,5 +180,29 @@ export default {
 .item {
   width: 400px;
   margin: 40px auto;
+}
+.div1 {
+  float: left;
+  /*width: auto;*/
+  width: 40%;
+  height: 60px;
+
+}
+
+.div2 {
+  margin-left: 70px;
+  float: left;
+  width: 35%;
+  margin-top: 10px;
+  height: 60px;
+}
+
+.div3 {
+  margin-left: 30px;
+  float: right;
+  align-content: center;
+  /*width: auto;*/
+  width: 10%;
+  height: 60px;
 }
 </style>

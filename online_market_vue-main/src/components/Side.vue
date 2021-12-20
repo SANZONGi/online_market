@@ -31,11 +31,12 @@
 
           <template slot="title">
             <i class="el-icon-document"></i>
-            我的商品</template>
+            商品管理</template>
           <el-menu-item-group>
             <el-menu-item index="3-1" @click="publish" v-if="flag">商品发布</el-menu-item>
             <el-menu-item index="3-2" @click="historygood">历史商品</el-menu-item>
             <el-menu-item index="3-3" @click="frozengood">冻结商品</el-menu-item>
+            <el-menu-item index="3-4" @click="classif">分类管理</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
         <el-submenu index="4">
@@ -45,7 +46,6 @@
           </template>
           <el-menu-item-group>
             <el-menu-item index="4-1" @click="checkuser">查看用户信息</el-menu-item>
-            <el-menu-item index="4-2" @click="userrecords">用户下单记录</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
       </el-menu>
@@ -107,6 +107,9 @@ export default {
       this.$router.push({ name:"Checkuser"})
     },userrecords(){
       this.$router.push({ name:"Userrecords"})
+    },
+    classif(){
+      this.$router.push({ name:"Classif"})
     }
   },
   created() {
